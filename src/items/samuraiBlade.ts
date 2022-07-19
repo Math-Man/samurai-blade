@@ -1,4 +1,5 @@
 import { CollectibleTypeCustom } from "../enums/CollectibleTypeCustom";
+import { printDebugText } from "./samuraiBlade/rendering/DebugText";
 
 export function SamuraiBladePostUpdate(): void {
   Isaac.DebugString(
@@ -7,9 +8,9 @@ export function SamuraiBladePostUpdate(): void {
 }
 
 export function SamuraiBladePostRender(): void {
-  Isaac.DebugString(
-    `POST RENDER FROM SAMURAI'S BLADE ${CollectibleTypeCustom.SB_SAMURAI_BLADE}`,
-  );
+  printDebugText();
+  // Isaac.DebugString( `POST RENDER FROM SAMURAI'S BLADE
+  // ${CollectibleTypeCustom.SB_SAMURAI_BLADE}`, );
 }
 
 export function SamuraiBladePostNewRoom(): void {

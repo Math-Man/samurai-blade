@@ -1,7 +1,7 @@
 import { ModCallback } from "isaac-typescript-definitions";
-import { SamuraiBladePostNewRoom } from "../items/samuraiBlade";
+import { SamuraiBladePostNewRoom } from "../items/SamuraiBlade";
 
-export function postUpdateInit(mod: Mod): void {
+export function postNewRoomInit(mod: Mod): void {
   mod.AddCallback(ModCallback.POST_NEW_ROOM, main);
 }
 

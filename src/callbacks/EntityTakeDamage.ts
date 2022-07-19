@@ -1,7 +1,7 @@
 import { ModCallback } from "isaac-typescript-definitions";
-import { SamuraiBladeEntityTakeDamage } from "../items/samuraiBlade";
+import { SamuraiBladeEntityTakeDamage } from "../items/SamuraiBlade";
 
-export function postUpdateInit(mod: Mod): void {
+export function entityTakeDamageInit(mod: Mod): void {
   mod.AddCallback(ModCallback.POST_NEW_ROOM, main);
 }
 

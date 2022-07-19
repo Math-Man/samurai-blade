@@ -1,7 +1,7 @@
 import { ModCallback } from "isaac-typescript-definitions";
-import { SamuraiBladePostGameStarted } from "../items/samuraiBlade";
+import { SamuraiBladePostGameStarted } from "../items/SamuraiBlade";
 
-export function postUpdateInit(mod: Mod): void {
+export function postGameStartedInit(mod: Mod): void {
   mod.AddCallback(ModCallback.POST_GAME_STARTED, main);
 }
 

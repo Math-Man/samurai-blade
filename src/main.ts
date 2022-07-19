@@ -1,5 +1,10 @@
 import { ModCallback } from "isaac-typescript-definitions";
-import { postUpdateInit } from "./callbacks/postUpdate";
+import { entityTakeDamageInit } from "./callbacks/EntityTakeDamage";
+import { evaluateCacheInit } from "./callbacks/EvaluateCache";
+import { postGameStartedInit } from "./callbacks/PostGameStarted";
+import { postNewRoomInit } from "./callbacks/PostNewRoom";
+import { postRenderInit } from "./callbacks/PostRender";
+import { postUpdateInit } from "./callbacks/PostUpdate";
 
 const MOD_NAME = "samurai-blade";
 
@@ -17,4 +22,9 @@ function registerCallbacks(mod: Mod) {
   );
 
   postUpdateInit(mod);
+  postRenderInit(mod);
+  postNewRoomInit(mod);
+  postGameStartedInit(mod);
+  evaluateCacheInit(mod);
+  entityTakeDamageInit(mod);
 }
