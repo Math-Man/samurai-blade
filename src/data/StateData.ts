@@ -1,13 +1,38 @@
-// eslint-disable-next-line isaacscript/require-const-assertions
-const StateData = {
-  HitChainProgression: 1,
-  HitChainRanges: { 1: [-0.7, 1], 2: [-0.62, 1], 3: [-1, 1], CHARGED: [-1, 1] },
-  BladeSprites: {},
-  HolsterSprites: {},
-  LastFireTimes: {},
-  ActiveAimDirection: Vector(0, 0),
-};
+interface PlayerState {
+  bladeSprite: Sprite;
+  holsterSprite: Sprite;
+  lastFireTime: float;
+  hitChainProgression: int;
+  activeAimDirection: Vector;
+  charged: boolean;
+}
 
-export function flushState(): void {
-  StateData.HitChainProgression = 1;
+const StateData = new Map<int, PlayerState>();
+
+export function getStateData(): Map<int, PlayerState> {
+  return StateData;
+}
+
+export function getUserStateData(player: EntityPlayer): PlayerState {
+  let playerData = getStateData().get(player.Index);
+
+  // Data doesn't exist, add it.
+  if (playerData === undefined) {
+    playerData = {
+      bladeSprite: Sprite(),
+      holsterSprite: Sprite(),
+      lastFireTime: 0,
+      hitChainProgression: 1,
+      activeAimDirection: Vector(0, 0),
+      charged: false,
+    };
+
+    // Load sprite data.
+    playerData.bladeSprite.Load("gfx/animation/BladeAnim.anm2", true);
+    playerData.holsterSprite.Load("gfx/animation/BladeAnim.anm2", true);
+
+    getStateData().set(player.Index, playerData);
+  }
+
+  return playerData;
 }

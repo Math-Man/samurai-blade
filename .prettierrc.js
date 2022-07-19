@@ -32,6 +32,12 @@ module.exports = {
         printWidth: 1000000,
       },
     },
+    {
+      files: ["**/*"],
+      options: {
+        printWidth: 200,
+      },
+    },
   ],
 
   // Allow proper formatting of XML files:
