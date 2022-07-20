@@ -26,10 +26,13 @@ export function getBladePhysicalRange(player: EntityPlayer): float {
 export function getBladeDamage(player: EntityPlayer): float {
   const { charged, hitChainProgression } = getPlayerStateData(player);
 
-  const damage = Tuneable.Damage[hitChainProgression] as number;
+  const damage = Tuneable.Damage[hitChainProgression];
+  if (damage === undefined) {
+    error("Invalid hit chain progression value");
+  }
   let damageVal = damage + player.Damage * 0.8;
 
-  if(charged) {
+  if (charged) {
     damageVal *= 1.5;
   }
 

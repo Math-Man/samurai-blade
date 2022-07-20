@@ -1,10 +1,10 @@
 import { ModCallback } from "isaac-typescript-definitions";
-import { entityTakeDamageInit } from "./callbacks/EntityTakeDamage";
-import { evaluateCacheInit } from "./callbacks/EvaluateCache";
-import { postGameStartedInit } from "./callbacks/PostGameStarted";
-import { postNewRoomInit } from "./callbacks/PostNewRoom";
-import { postRenderInit } from "./callbacks/PostRender";
-import { postUpdateInit } from "./callbacks/postUpdate";
+import { entityTakeDamageInit } from "./callbacks/MCEntityTakeDamage";
+import { evaluateCacheInit } from "./callbacks/MCEvaluateCache";
+import { postGameStartedInit } from "./callbacks/MCPostGameStarted";
+import { postNewRoomInit } from "./callbacks/MCPostNewRoom";
+import { postRenderInit } from "./callbacks/MCPostRender";
+import { postUpdateInit } from "./callbacks/MCPostUpdate";
 
 const MOD_NAME = "samurai-blade";
 
@@ -17,9 +17,7 @@ export function main(): void {
 }
 
 function registerCallbacks(mod: Mod) {
-  Isaac.DebugString(
-    `Callback triggered: POST_GAME_STARTED ${ModCallback.POST_GAME_STARTED}`,
-  );
+  Isaac.DebugString(`Callback triggered: POST_GAME_STARTED ${ModCallback.POST_GAME_STARTED}`);
 
   postUpdateInit(mod);
   postRenderInit(mod);

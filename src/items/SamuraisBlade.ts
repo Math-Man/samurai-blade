@@ -20,6 +20,6 @@ export function SamuraiBladePostGameStarted(): void {
   Isaac.DebugString(`POST POST GAME STARTED FROM SAMURAI'S BLADE ${CollectibleTypeCustom.SB_SAMURAI_BLADE}`);
 }
 
-export function SamuraiBladeEntityTakeDamage(): void {
+export function SamuraiBladeEntityDamage(): void {
   Isaac.DebugString(`POST ENTITY TAKE DAMAGE FROM SAMURAI'S BLADE ${CollectibleTypeCustom.SB_SAMURAI_BLADE}`);
 }
