@@ -1,11 +1,14 @@
 import { EntityType, PickupVariant } from "isaac-typescript-definitions";
-import { game, getPlayers } from "isaacscript-common";
+import { game, getPlayers, sfxManager } from "isaacscript-common";
 import { getPlayerStateData } from "../../../data/StateData";
 import { Tuneable } from "../../../data/Tuneable";
 import { CollectibleTypeCustom } from "../../../enums/CollectibleTypeCustom";
+import { SoundsCustom } from "../../../enums/SoundsCustom";
 import { Animations, isFinished, isPlaying, isPlayingOrFinishedChargedIdle, isPlayingOrFinishedSwitchToChargedIdle, isPlayingOrFinishedSwitchToIdle } from "../../../helpers/AnimationHelpers";
 import { canPlayerFireBlade, getAndUpdatePlayerBladeFireTime, getChargeTime } from "../../../helpers/BladeHelpers";
+import { flog } from "../../../helpers/DebugHelper";
 import { isPlayerShooting, playerHasSamuraisBladeItem } from "../../../helpers/Helpers";
+import { dealSamuraiBladeDamage } from "./BladeDamage";
 
 export function updateBladeBehavior(): void {
   spawnItemFirstFrame();
@@ -34,22 +37,22 @@ function updatePlayerBladeBehavior(player: EntityPlayer) {
     if ((hitChainProgression === 1 && (isPlaying(bladeSprite, Animations.IDLE) || isPlayingOrFinishedSwitchToIdle(bladeSprite))) || isFinished(bladeSprite, Animations.THIRD_SWING)) {
       bladeSprite.Play(Animations.FIRST_SWING, true);
       hitChainProgression = 2;
-      // fxManager.Play(Sounds.slice);
+      sfxManager.Play(SoundsCustom.SB_SMALL_SLICE, 1, 1, false);
       game.ShakeScreen(2);
     } else if (isPlaying(bladeSprite, Animations.CHARGED_IDLE) || isPlayingOrFinishedSwitchToChargedIdle(bladeSprite)) {
       bladeSprite.Play(Animations.CHARGED_SWING, true);
       hitChainProgression = 2;
-      // fxManager.Play(Sounds.slice);
       game.ShakeScreen(12);
+      sfxManager.Play(SoundsCustom.SB_CHARGED_SLICE, 2, 0, false);
     } else if (hitChainProgression === 2 && (isFinished(bladeSprite, Animations.FIRST_SWING) || isFinished(bladeSprite, Animations.CHARGED_SWING))) {
       bladeSprite.Play(Animations.SECOND_SWING, true);
       hitChainProgression = 3;
-      // fxManager.Play(Sounds.slice);
+      sfxManager.Play(SoundsCustom.SB_SMALL_SLICE, 1, 0, false);
       game.ShakeScreen(3);
     } else if (hitChainProgression === 3 && isFinished(bladeSprite, Animations.SECOND_SWING)) {
       bladeSprite.Play(Animations.THIRD_SWING, true);
       hitChainProgression = 1;
-      // fxManager.Play(Sounds.slice);
+      sfxManager.Play(SoundsCustom.SB_BIG_SLICE, 1.5, 1, false);
       game.ShakeScreen(5);
     } else {
       canDealDamage = false;
@@ -58,6 +61,8 @@ function updatePlayerBladeBehavior(player: EntityPlayer) {
     if (canDealDamage) {
       const playerAimDir = player.GetAimDirection();
       getPlayerStateData(player).activeAimDirection = Vector(playerAimDir.X, playerAimDir.Y);
+      dealSamuraiBladeDamage(player);
+      flog(`I can attack: ${getPlayerStateData(player).lastFireTime}`, "Blade");
       // Do entity damage, push etc etc etc.
     }
     getPlayerStateData(player).hitChainProgression = hitChainProgression;
@@ -97,7 +102,7 @@ function updatePlayerBladeBehavior(player: EntityPlayer) {
         getPlayerStateData(player).charged = true;
         if (!isPlayingOrFinishedChargedIdle(bladeSprite)) {
           bladeSprite.Play(Animations.SWITCH_CHARGED_IDLE, false);
-          // TODO: Play sound.
+          sfxManager.Play(SoundsCustom.SB_CHARGED_UP);
         }
 
         if (isFinished(bladeSprite, Animations.SWITCH_CHARGED_IDLE)) {

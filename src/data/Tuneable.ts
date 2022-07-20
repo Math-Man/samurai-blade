@@ -5,9 +5,8 @@ interface ITuneable {
   BaseRange: number;
   PushMultiplier: number;
   TimeToGoIdleFrames: number;
-  TimeToChargeUpFrames: number;
   HasLineOfSightCheck: boolean;
-  DamageModifierForEachEnemyHit: float;
+  DamageModifierForEachEnemyHit: number;
   StatRange: float;
   StatRangePhysical: float;
   StatRangeVisual: float;
@@ -37,8 +36,7 @@ export const Tuneable: ITuneable = {
   ]),
   BaseRange: 95,
   PushMultiplier: 15,
-  TimeToGoIdleFrames: 20,
-  TimeToChargeUpFrames: 80,
+  TimeToGoIdleFrames: 30,
   HasLineOfSightCheck: false,
   DamageModifierForEachEnemyHit: 0.9,
   StatRange: 2.1,

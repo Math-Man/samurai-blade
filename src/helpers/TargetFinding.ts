@@ -20,9 +20,9 @@ export function isHitTargetInsideArea(player: EntityPlayer, centerPosition: Vect
     ranges = Tuneable.HitChainRanges.get("charged");
   }
 
-  if (ranges === undefined || ranges[1] === undefined || ranges[2] === undefined) {
-    error("Attempting to pull wrong ranges.");
+  if (ranges === undefined || ranges[0] === undefined || ranges[1] === undefined) {
+    error(`Attempting to pull wrong ranges. ${tostring(ranges)}`);
   }
 
-  return hitProduct >= ranges[1] && hitProduct <= ranges[2];
+  return hitProduct >= ranges[0] && hitProduct <= ranges[1];
 }

@@ -1,4 +1,7 @@
-import { CollectibleTypeCustom } from "../enums/CollectibleTypeCustom";
+import { CacheFlag } from "isaac-typescript-definitions";
+import { flushAllStateData } from "../data/StateData";
+import { flog } from "../helpers/DebugHelper";
+import { motivatePlayer } from "./samuraiBlade/onCache/Motivate";
 import { printDebugText } from "./samuraiBlade/rendering/DebugText";
 import { renderBlades } from "./samuraiBlade/rendering/RenderBlade";
 import { updateBladeBehavior } from "./samuraiBlade/update/BladeBehavior";
@@ -12,14 +15,19 @@ export function SamuraiBladePostRender(): void {
   renderBlades();
 }
 
-export function SamuraiBladePostNewRoom(): void {
-  Isaac.DebugString(`POST NEW ROOM FROM SAMURAI'S BLADE ${CollectibleTypeCustom.SB_SAMURAI_BLADE}`);
-}
+export function SamuraiBladePostRenderPlayer(): void {}
+
+export function SamuraiBladePostRenderPickup(): void {}
+
+export function SamuraiBladePostNewRoom(): void {}
 
 export function SamuraiBladePostGameStarted(): void {
-  Isaac.DebugString(`POST POST GAME STARTED FROM SAMURAI'S BLADE ${CollectibleTypeCustom.SB_SAMURAI_BLADE}`);
+  flushAllStateData();
+  flog("Resetting all states", "SamuraisBlade");
 }
 
-export function SamuraiBladeEntityDamage(): void {
-  Isaac.DebugString(`POST ENTITY TAKE DAMAGE FROM SAMURAI'S BLADE ${CollectibleTypeCustom.SB_SAMURAI_BLADE}`);
+export function SamuraiBladeEntityDamage(): void {}
+
+export function SamuraiBladeEvalCache(player: EntityPlayer, cacheFlag: CacheFlag): void {
+  motivatePlayer();
 }

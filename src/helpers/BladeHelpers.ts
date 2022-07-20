@@ -67,3 +67,8 @@ export function canPlayerFireBlade(player: EntityPlayer): boolean {
 export function getChargeTime(player: EntityPlayer): number {
   return clamp((4 * Tuneable.TimeToGoIdleFrames) / player.ShotSpeed, Tuneable.TimeToGoIdleFrames * 2, Tuneable.TimeToGoIdleFrames * 10);
 }
+
+export function getActualTimeToGoIdle(player: EntityPlayer): number {
+  const fireDelay = getBladeFireDelay(player);
+  return Tuneable.TimeToGoIdleFrames <= getBladeFireDelay(player) ? fireDelay + 10 : Tuneable.TimeToGoIdleFrames;
+}

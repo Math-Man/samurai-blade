@@ -1,0 +1,23 @@
+<sounds root="sounds/">
+  <sound name="MOTIVATION">
+    <sample weight="1" path="SickRiff.wav" />
+  </sound>
+  <sound name="Slice">
+    <sample weight="1" path="MMSwing1.wav" />
+    <sample weight="1" path="MMSwing2.wav" />
+    <sample weight="1" path="MMSwing3.wav" />
+    <sample weight="1" path="MMSwing4.wav" />
+    <sample weight="1" path="MMSwing5.wav" />
+    <sample weight="1" path="MMSwing6.wav" />
+    <sample weight="1" path="MMSwing7.wav" />
+  </sound>
+  <sound name="BigSlice">
+    <sample weight="1" path="MMBigSwing1.wav" />
+  </sound>
+  <sound name="ChargedSlice">
+    <sample weight="1" path="MMChargedSwing1.wav" />
+  </sound>
+  <sound name="ChargedUp">
+    <sample weight="1" path="MMCharged1.wav" />
+  </sound>
+</sounds>

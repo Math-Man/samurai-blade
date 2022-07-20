@@ -13,6 +13,10 @@ export function getStateData(): Map<int, PlayerState> {
   return StateData;
 }
 
+export function flushAllStateData(): void {
+  StateData.clear();
+}
+
 export function getPlayerStateData(player: EntityPlayer): PlayerState {
   let playerData = getStateData().get(player.Index);
 
@@ -35,4 +39,8 @@ export function getPlayerStateData(player: EntityPlayer): PlayerState {
   }
 
   return playerData;
+}
+
+export function getPlayerStateDataNoCreate(player: EntityPlayer): PlayerState | undefined {
+  return getStateData().get(player.Index);
 }
