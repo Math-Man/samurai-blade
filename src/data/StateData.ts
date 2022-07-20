@@ -2,7 +2,7 @@ interface PlayerState {
   bladeSprite: Sprite;
   holsterSprite: Sprite;
   lastFireTime: float;
-  hitChainProgression: number;
+  hitChainProgression: int;
   activeAimDirection: Vector;
   charged: boolean;
 }
