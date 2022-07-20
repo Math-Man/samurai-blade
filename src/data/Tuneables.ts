@@ -1,8 +1,8 @@
 
 interface ITuneable {
   HitChainRanges : Map<unknown, number[]>,
-  FireDelayByProgressionStage: Array<number>,
-  Damage: Array<number>,
+  FireDelayByProgressionStage: number[],
+  Damage: number[],
   BaseRange: number,
   PushMultiplier: number,
   TimeToGoIdleFrames: number,
@@ -39,7 +39,7 @@ export const Tuneable : ITuneable = {
     StatDamage: 0.6,
     StatFireRate: 1,
     StatShotSpeed: 0.5,
-}
+} as const;
 /*
 export const Tuneable = {
 
