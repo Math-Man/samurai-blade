@@ -6,6 +6,7 @@ import {
   isFinished,
   isPlaying,
   isPlayingOrFinishedChargedIdle,
+  isPlayingOrFinishedChargedSwing,
   isPlayingOrFinishedFirstSwing,
   isPlayingOrFinishedIdle,
   isPlayingOrFinishedSwitchToChargedIdle,
@@ -71,7 +72,7 @@ function renderUserBlade(sprite: Sprite, player: EntityPlayer) {
     sprite.PlaybackSpeed = 0.5;
   }
 
-  if (isPlayingOrFinishedChargedIdle(sprite) || isPlayingOrFinishedFirstSwing(sprite)) {
+  if (isPlayingOrFinishedChargedSwing(sprite) || isPlayingOrFinishedChargedIdle(sprite) || isPlayingOrFinishedFirstSwing(sprite)) {
     sprite.Offset = Vector(-5, 3);
   }
 

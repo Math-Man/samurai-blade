@@ -110,6 +110,7 @@ function updatePlayerBladeBehavior(player: EntityPlayer) {
 
 function spawnItemFirstFrame() {
   if (game.GetFrameCount() === 1) {
+    Isaac.DebugString(`Spawning item on the floor: ${CollectibleTypeCustom.SB_SAMURAI_BLADE}`);
     Isaac.Spawn(EntityType.PICKUP, PickupVariant.COLLECTIBLE, CollectibleTypeCustom.SB_SAMURAI_BLADE, Vector(320, 300), Vector(0, 0), undefined);
   }
 }
