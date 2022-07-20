@@ -2,11 +2,11 @@ import { EntityType, PickupVariant } from "isaac-typescript-definitions";
 import { game, getPlayers } from "isaacscript-common";
 import { getPlayerStateData } from "../../../data/StateData";
 import { CollectibleTypeCustom } from "../../../enums/CollectibleTypeCustom";
-import { playerHasSamuraisBladeItem } from "../../../helpers/Helpers";
+import { canPlayerFireBlade, getAndUpdatePlayerBladeFireTime } from "../../../helpers/BladeHelpers";
+import { isPlayerShooting, playerHasSamuraisBladeItem } from "../../../helpers/Helpers";
 
 export function updateBladeBehavior(): void {
   spawnItemFirstFrame();
-  Isaac.DebugString(`!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! ${CollectibleTypeCustom.SB_SAMURAI_BLADE}`);
 
   const realPlayers = getPlayers();
   for (const player of realPlayers) {
@@ -22,6 +22,13 @@ function updatePlayerBladeBehavior(player: EntityPlayer) {
 
   if (bladeSprite.IsFinished("ChargedSwing")) {
     getPlayerStateData(player).charged = true;
+  }
+
+  if (player.IsExtraAnimationFinished() && isPlayerShooting(player) && canPlayerFireBlade(player)) {
+    getAndUpdatePlayerBladeFireTime(player);
+    const canDealDamage = false;
+    const { hitChainProgression } = getPlayerStateData(player);
+  } else {
   }
 }
 
