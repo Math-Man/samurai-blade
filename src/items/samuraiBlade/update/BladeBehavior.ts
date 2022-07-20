@@ -1,5 +1,5 @@
 import { EntityType, PickupVariant } from "isaac-typescript-definitions";
-import { game } from "isaacscript-common";
+import { game, getPlayers } from "isaacscript-common";
 import { getPlayerStateData } from "../../../data/StateData";
 import { CollectibleTypeCustom } from "../../../enums/CollectibleTypeCustom";
 import { playerHasSamuraisBladeItem } from "../../../helpers/Helpers";
@@ -7,8 +7,10 @@ import { playerHasSamuraisBladeItem } from "../../../helpers/Helpers";
 export function updateBladeBehavior(): void {
   spawnItemFirstFrame();
   Isaac.DebugString(`!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! ${CollectibleTypeCustom.SB_SAMURAI_BLADE}`);
-  for (let i = 0; i < game.GetNumPlayers(); i++) {
-    const player = Isaac.GetPlayer(i);
+  
+  const realPlayers = getPlayers();
+  for (let i = 0; i < realPlayers.length; i++) {
+    const player = realPlayers[i] as EntityPlayer;
     if (playerHasSamuraisBladeItem(player)) {
       updatePlayerBladeBehavior(player);
     }

@@ -1,10 +1,11 @@
-import { game } from "isaacscript-common";
+import { game, getPlayers } from "isaacscript-common";
 import { getPlayerStateData } from "../../../data/StateData";
 import { getPlayerById } from "../../../helpers/Helpers";
 
 export function renderBlades(): void {
-  for (let i = 0; i < game.GetNumPlayers(); i++) {
-    const player = getPlayerById(i);
+  const realPlayers = getPlayers();
+  for (let i = 0; i < realPlayers.length; i++) {
+    const player = realPlayers[i] as EntityPlayer;
     const { bladeSprite, holsterSprite } = getPlayerStateData(player);
 
     renderUserBlade(bladeSprite, player);
