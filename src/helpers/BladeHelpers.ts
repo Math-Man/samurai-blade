@@ -66,7 +66,7 @@ export function canPlayerFireBlade(player: EntityPlayer): boolean {
 
 export function getChargeTime(player: EntityPlayer): number {
   const timeToGoIdle = getActualTimeToGoIdle(player);
-  return clamp((4 * timeToGoIdle) / player.ShotSpeed, timeToGoIdle * 2, timeToGoIdle * 10);
+  return clamp((3 * timeToGoIdle) / player.ShotSpeed, timeToGoIdle * 2, timeToGoIdle * 10);
 }
 
 export function getActualTimeToGoIdle(player: EntityPlayer): number {

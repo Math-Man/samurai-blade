@@ -1,6 +1,9 @@
 import { CacheFlag } from "isaac-typescript-definitions";
-import { flushAllStateData } from "../data/StateData";
+import { getPlayers, sfxManager } from "isaacscript-common";
+import { flushAllStateData, getPlayerStateData } from "../data/StateData";
+import { SoundsCustom } from "../enums/SoundsCustom";
 import { flog } from "../helpers/DebugHelper";
+import { playerHasSamuraisBladeItem } from "../helpers/Helpers";
 import { motivatePlayer } from "./samuraiBlade/onCache/Motivate";
 import { spawnGore } from "./samuraiBlade/onDealingDamage/SpawnGore";
 import { printDebugText } from "./samuraiBlade/rendering/DebugText";
@@ -20,7 +23,15 @@ export function SamuraiBladePostRenderPlayer(): void {}
 
 export function SamuraiBladePostRenderPickup(): void {}
 
-export function SamuraiBladePostNewRoom(): void {}
+export function SamuraiBladePostNewRoom(): void {
+  const realPlayers = getPlayers();
+  for (const player of realPlayers) {
+    if (playerHasSamuraisBladeItem(player)) {
+      getPlayerStateData(player).charged = true;
+      sfxManager.Play(SoundsCustom.SB_CHARGED_UP, 0.5, 0);
+    }
+  }
+}
 
 export function SamuraiBladePostGameStarted(): void {
   flushAllStateData();
