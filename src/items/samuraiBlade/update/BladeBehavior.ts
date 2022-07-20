@@ -1,11 +1,10 @@
 import { EntityType, PickupVariant } from "isaac-typescript-definitions";
 import { game, getPlayers, sfxManager } from "isaacscript-common";
 import { getPlayerStateData } from "../../../data/StateData";
-import { Tuneable } from "../../../data/Tuneable";
 import { CollectibleTypeCustom } from "../../../enums/CollectibleTypeCustom";
 import { SoundsCustom } from "../../../enums/SoundsCustom";
-import { Animations, isFinished, isPlaying, isPlayingOrFinishedChargedIdle, isPlayingOrFinishedSwitchToChargedIdle, isPlayingOrFinishedSwitchToIdle } from "../../../helpers/AnimationHelpers";
-import { canPlayerFireBlade, getAndUpdatePlayerBladeFireTime, getChargeTime } from "../../../helpers/BladeHelpers";
+import { Animations, isFinished, isPlaying, isPlayingOrFinishedSwitchToChargedIdle, isPlayingOrFinishedSwitchToIdle } from "../../../helpers/AnimationHelpers";
+import { canPlayerFireBlade, getActualTimeToGoIdle, getAndUpdatePlayerBladeFireTime, getChargeTime } from "../../../helpers/BladeHelpers";
 import { flog } from "../../../helpers/DebugHelper";
 import { isPlayerShooting, playerHasSamuraisBladeItem } from "../../../helpers/Helpers";
 import { dealSamuraiBladeDamage } from "./BladeDamage";
@@ -72,7 +71,7 @@ function updatePlayerBladeBehavior(player: EntityPlayer) {
 
     if (lastFireTime >= 0) {
       if (
-        game.GetFrameCount() - lastFireTime > Tuneable.TimeToGoIdleFrames &&
+        game.GetFrameCount() - lastFireTime > getActualTimeToGoIdle(player) &&
         !(
           isPlaying(bladeSprite, Animations.FIRST_SWING) ||
           isPlaying(bladeSprite, Animations.SECOND_SWING) ||
@@ -100,9 +99,10 @@ function updatePlayerBladeBehavior(player: EntityPlayer) {
         ((!isPlaying(bladeSprite, Animations.CHARGED_IDLE) && !isPlaying(bladeSprite, Animations.SWITCH_CHARGED_IDLE)) || isFinished(bladeSprite, Animations.SWITCH_CHARGED_IDLE))
       ) {
         getPlayerStateData(player).charged = true;
-        if (!isPlayingOrFinishedChargedIdle(bladeSprite)) {
+        if (!isPlayingOrFinishedSwitchToChargedIdle(bladeSprite)) {
           bladeSprite.Play(Animations.SWITCH_CHARGED_IDLE, false);
-          sfxManager.Play(SoundsCustom.SB_CHARGED_UP);
+          sfxManager.Play(SoundsCustom.SB_CHARGED_UP, 2, 0);
+          flog(`AM I PLAYING THIS TWICE??? ${bladeSprite.GetAnimation()}`, "SOUND TEST");
         }
 
         if (isFinished(bladeSprite, Animations.SWITCH_CHARGED_IDLE)) {

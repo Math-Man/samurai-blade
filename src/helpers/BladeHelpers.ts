@@ -41,7 +41,7 @@ export function getBladeFireDelay(player: EntityPlayer): number {
   if (fireDelay === undefined) {
     error("Invalid hit chain progression value");
   }
-  return clamp(fireDelay - (1 / player.MaxFireDelay - 0.1) * 100, 1, Tuneable.TimeToGoIdleFrames);
+  return clamp(fireDelay - (1 / player.MaxFireDelay - 0.1) * 100, 4, 100);
 }
 
 export function getAndUpdatePlayerBladeFireTime(player: EntityPlayer): number {
@@ -65,7 +65,8 @@ export function canPlayerFireBlade(player: EntityPlayer): boolean {
 }
 
 export function getChargeTime(player: EntityPlayer): number {
-  return clamp((4 * Tuneable.TimeToGoIdleFrames) / player.ShotSpeed, Tuneable.TimeToGoIdleFrames * 2, Tuneable.TimeToGoIdleFrames * 10);
+  const timeToGoIdle = getActualTimeToGoIdle(player);
+  return clamp((4 * timeToGoIdle) / player.ShotSpeed, timeToGoIdle * 2, timeToGoIdle * 10);
 }
 
 export function getActualTimeToGoIdle(player: EntityPlayer): number {

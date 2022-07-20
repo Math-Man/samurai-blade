@@ -1,6 +1,6 @@
 import { game } from "isaacscript-common";
 import { getPlayerStateData } from "../../../data/StateData";
-import { getBladeDamage, getBladeFireDelay, getChargeTime } from "../../../helpers/BladeHelpers";
+import { getActualTimeToGoIdle, getBladeDamage, getBladeFireDelay, getChargeTime } from "../../../helpers/BladeHelpers";
 import { getPlayerById, playerHasSamuraisBladeItem } from "../../../helpers/Helpers";
 
 export function printDebugText(): void {
@@ -24,5 +24,6 @@ export function printDebugText(): void {
     Isaac.RenderText(`Damage   : ${tostring(getBladeDamage(player))}`, 280, 180, 255, 255, 255, 69);
     Isaac.RenderText(`Fire Dly : ${tostring(getBladeFireDelay(player))}`, 280, 195, 255, 255, 255, 69);
     Isaac.RenderText(`Fire TTL : ${tostring(game.GetFrameCount() - (getPlayerStateData(player).lastFireTime + getBladeFireDelay(player)))}`, 280, 210, 255, 255, 255, 69);
+    Isaac.RenderText(`TTGI : ${tostring(getActualTimeToGoIdle(player))}`, 280, 225, 255, 255, 255, 69);
   }
 }
