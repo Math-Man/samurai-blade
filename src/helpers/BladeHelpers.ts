@@ -4,7 +4,7 @@ import { Tuneable } from "../data/Tuneable";
 
 export function getBladeSpriteScaleFromStats(player: EntityPlayer): Vector {
   const { charged } = getPlayerStateData(player);
-  let scaleMultiplier = (1 + (player.TearRange / 40) * Tuneable.StatRange) * 0.02 * Tuneable.StatRangeVisual;
+  let scaleMultiplier = (1 + (player.TearRange / 40) * Tuneable.StatRange * 0.02) * Tuneable.StatRangeVisual;
 
   if (charged) {
     scaleMultiplier += scaleMultiplier * 0.5;
@@ -25,7 +25,7 @@ export function getBladePhysicalRange(player: EntityPlayer): float {
 
 export function getBladeDamage(player: EntityPlayer): float {
   const { charged, hitChainProgression } = getPlayerStateData(player);
-  const damage = Tuneable.Damage[hitChainProgression];
+  const damage = Tuneable.Damage.get(hitChainProgression);
   if (damage === undefined) {
     error("Invalid hit chain progression value");
   }
@@ -37,7 +37,7 @@ export function getBladeDamage(player: EntityPlayer): float {
 }
 
 export function getBladeFireDelay(player: EntityPlayer): number {
-  const fireDelay = Tuneable.FireDelayByProgressionStage[getPlayerStateData(player).hitChainProgression];
+  const fireDelay = Tuneable.FireDelayByProgressionStage.get(getPlayerStateData(player).hitChainProgression);
   if (fireDelay === undefined) {
     error("Invalid hit chain progression value");
   }
@@ -55,11 +55,15 @@ export function canPlayerFireBlade(player: EntityPlayer): boolean {
     getPlayerStateData(player).lastFireTime = 0;
   }
 
-  const firingDelay = Tuneable.FireDelayByProgressionStage[getPlayerStateData(player).hitChainProgression];
+  const firingDelay = Tuneable.FireDelayByProgressionStage.get(getPlayerStateData(player).hitChainProgression);
 
   if (firingDelay === undefined) {
     error("Invalid hit chain progression value");
   }
 
   return math.abs(game.GetFrameCount() - getPlayerStateData(player).lastFireTime) >= firingDelay;
+}
+
+export function getChargeTime(player: EntityPlayer): number {
+  return clamp((4 * Tuneable.TimeToGoIdleFrames) / player.ShotSpeed, Tuneable.TimeToGoIdleFrames * 2, Tuneable.TimeToGoIdleFrames * 10);
 }
