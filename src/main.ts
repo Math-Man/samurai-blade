@@ -4,7 +4,7 @@ import { evaluateCacheInit } from "./callbacks/EvaluateCache";
 import { postGameStartedInit } from "./callbacks/PostGameStarted";
 import { postNewRoomInit } from "./callbacks/PostNewRoom";
 import { postRenderInit } from "./callbacks/PostRender";
-import { postUpdateInit } from "./callbacks/PostUpdate";
+import { postUpdateInit } from "./callbacks/postUpdate";
 
 const MOD_NAME = "samurai-blade";
 
