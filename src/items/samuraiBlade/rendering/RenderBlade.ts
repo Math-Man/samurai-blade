@@ -1,6 +1,5 @@
 import { game, getPlayers } from "isaacscript-common";
 import { getPlayerStateData } from "../../../data/StateData";
-import { getPlayerById } from "../../../helpers/Helpers";
 
 export function renderBlades(): void {
   const realPlayers = getPlayers();
