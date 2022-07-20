@@ -7,10 +7,9 @@ import { playerHasSamuraisBladeItem } from "../../../helpers/Helpers";
 export function updateBladeBehavior(): void {
   spawnItemFirstFrame();
   Isaac.DebugString(`!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! ${CollectibleTypeCustom.SB_SAMURAI_BLADE}`);
-  
+
   const realPlayers = getPlayers();
-  for (let i = 0; i < realPlayers.length; i++) {
-    const player = realPlayers[i] as EntityPlayer;
+  for (const player of realPlayers) {
     if (playerHasSamuraisBladeItem(player)) {
       updatePlayerBladeBehavior(player);
     }

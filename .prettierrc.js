@@ -35,7 +35,7 @@ module.exports = {
     {
       files: ["**/*"],
       options: {
-        printWidth: 200,
+        printWidth: 500,
       },
     },
   ],

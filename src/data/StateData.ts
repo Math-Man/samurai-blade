@@ -21,7 +21,7 @@ export function getPlayerStateData(player: EntityPlayer): PlayerState {
     playerData = {
       bladeSprite: Sprite(),
       holsterSprite: Sprite(),
-      lastFireTime: 0,
+      lastFireTime: -1,
       hitChainProgression: 1,
       activeAimDirection: Vector(0, 0),
       charged: false,
