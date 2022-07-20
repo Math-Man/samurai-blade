@@ -2,7 +2,7 @@ interface PlayerState {
   bladeSprite: Sprite;
   holsterSprite: Sprite;
   lastFireTime: float;
-  hitChainProgression: int;
+  hitChainProgression: number;
   activeAimDirection: Vector;
   charged: boolean;
 }
@@ -13,7 +13,7 @@ export function getStateData(): Map<int, PlayerState> {
   return StateData;
 }
 
-export function getUserStateData(player: EntityPlayer): PlayerState {
+export function getPlayerStateData(player: EntityPlayer): PlayerState {
   let playerData = getStateData().get(player.Index);
 
   // Data doesn't exist, add it.

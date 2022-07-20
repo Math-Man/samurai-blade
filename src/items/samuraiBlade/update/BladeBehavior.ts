@@ -1,6 +1,6 @@
 import { EntityType, PickupVariant } from "isaac-typescript-definitions";
 import { game } from "isaacscript-common";
-import { getUserStateData } from "../../../data/StateData";
+import { getPlayerStateData } from "../../../data/StateData";
 import { CollectibleTypeCustom } from "../../../enums/CollectibleTypeCustom";
 import { playerHasSamuraisBladeItem } from "../../../helpers/Helpers";
 
@@ -17,10 +17,10 @@ export function updateBladeBehavior(): void {
 
 function updatePlayerBladeBehavior(player: EntityPlayer) {
   disableShooting(player);
-  const { bladeSprite } = getUserStateData(player);
+  const { bladeSprite } = getPlayerStateData(player);
 
   if (bladeSprite.IsFinished("ChargedSwing")) {
-    getUserStateData(player).charged = true;
+    getPlayerStateData(player).charged = true;
   }
 }
 

@@ -1,7 +1,7 @@
 import { CollectibleTypeCustom } from "../enums/CollectibleTypeCustom";
 import { printDebugText } from "./samuraiBlade/rendering/DebugText";
 import { renderBlades } from "./samuraiBlade/rendering/RenderBlade";
-import { updateBladeBehavior } from "./samuraiBlade/update/updateBladeBehavior";
+import { updateBladeBehavior } from "./samuraiBlade/update/BladeBehavior";
 
 export function SamuraiBladePostUpdate(): void {
   updateBladeBehavior();

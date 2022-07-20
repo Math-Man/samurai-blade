@@ -1,15 +1,24 @@
 import { game } from "isaacscript-common";
-import { getUserStateData } from "../../../data/StateData";
+import { getPlayerStateData } from "../../../data/StateData";
 import { getPlayerById } from "../../../helpers/Helpers";
 
 export function renderBlades(): void {
   for (let i = 0; i < game.GetNumPlayers(); i++) {
     const player = getPlayerById(i);
-    const { bladeSprite, holsterSprite } = getUserStateData(player);
+    const { bladeSprite, holsterSprite } = getPlayerStateData(player);
 
     renderUserBlade(bladeSprite, player);
 
-    if (!(bladeSprite.IsPlaying("Idle") || bladeSprite.IsPlaying("SwitchToIdle") || bladeSprite.IsPlaying("SwitchToIdle") || bladeSprite.IsFinished("ChargedIdle") || bladeSprite.IsPlaying("SwitchToChargedIdle") || bladeSprite.IsFinished("SwitchToChargedIdle"))) {
+    if (
+      !(
+        bladeSprite.IsPlaying("Idle") ||
+        bladeSprite.IsPlaying("SwitchToIdle") ||
+        bladeSprite.IsPlaying("SwitchToIdle") ||
+        bladeSprite.IsFinished("ChargedIdle") ||
+        bladeSprite.IsPlaying("SwitchToChargedIdle") ||
+        bladeSprite.IsFinished("SwitchToChargedIdle")
+      )
+    ) {
       renderUserEmptyHolster(holsterSprite, player);
     }
   }
