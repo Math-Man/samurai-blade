@@ -39,10 +39,10 @@ export function SamuraiBladePostGameStarted(): void {
 }
 
 export function SamuraiBladeEntityDamage(tookDamage: Entity, damageAmount: number, damageFlags: BitFlag, damageSource: EntityRef, damageCountdownFrames: number): boolean {
-  spawnGore(tookDamage, damageAmount);
+  spawnGore(tookDamage, damageAmount, damageFlags, damageSource, damageCountdownFrames);
   return true;
 }
 
 export function SamuraiBladeEvalCache(player: EntityPlayer, cacheFlag: CacheFlag): void {
-  motivatePlayer();
+  motivatePlayer(player, cacheFlag);
 }
