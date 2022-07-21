@@ -4,4 +4,5 @@ export const SoundsCustom = {
   SB_BIG_SLICE: Isaac.GetSoundIdByName("BigSlice"),
   SB_CHARGED_SLICE: Isaac.GetSoundIdByName("ChargedSlice"),
   SB_CHARGED_UP: Isaac.GetSoundIdByName("ChargedUp"),
+  SB_HIT: Isaac.GetSoundIdByName("Hit"),
 } as const;

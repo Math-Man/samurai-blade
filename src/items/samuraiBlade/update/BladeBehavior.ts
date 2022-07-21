@@ -1,12 +1,14 @@
-import { EntityType, PickupVariant } from "isaac-typescript-definitions";
+import { EffectVariant, EntityType, PickupVariant, SoundEffect } from "isaac-typescript-definitions";
 import { game, getPlayers, sfxManager } from "isaacscript-common";
 import { getPlayerStateData } from "../../../data/StateData";
+import { Tuneable } from "../../../data/Tuneable";
 import { CollectibleTypeCustom } from "../../../enums/CollectibleTypeCustom";
 import { SoundsCustom } from "../../../enums/SoundsCustom";
 import { Animations, isFinished, isPlaying, isPlayingOrFinishedSwitchToChargedIdle, isPlayingOrFinishedSwitchToIdle } from "../../../helpers/AnimationHelpers";
 import { canPlayerFireBlade, getActualTimeToGoIdle, getAndUpdatePlayerBladeFireTime, getChargeTime } from "../../../helpers/BladeHelpers";
 import { flog } from "../../../helpers/DebugHelper";
 import { isPlayerShooting, playerHasSamuraisBladeItem } from "../../../helpers/Helpers";
+import { clearDamageState, hasDamageState } from "../onDealingDamage/RegisterDamageState";
 import { dealSamuraiBladeDamage } from "./BladeDamage";
 
 export function updateBladeBehavior(): void {
@@ -20,12 +22,25 @@ export function updateBladeBehavior(): void {
   }
 }
 
+let behaviorTickCounter = 0;
+
 function updatePlayerBladeBehavior(player: EntityPlayer) {
   disableShooting(player);
   const { bladeSprite } = getPlayerStateData(player);
 
-  if (isFinished(bladeSprite, Animations.CHARGED_SWING)) {
+  if (!(isPlaying(bladeSprite, Animations.CHARGED_IDLE) || isPlayingOrFinishedSwitchToChargedIdle(bladeSprite) || isPlaying(bladeSprite, Animations.CHARGED_SWING))) {
     getPlayerStateData(player).charged = false;
+  }
+
+  if (hasDamageState(player)) {
+    const hitFrames = Tuneable.hitStateFrameDelays.get(getPlayerStateData(player).hitChainProgression);
+    if (hitFrames !== undefined) {
+      if (hitFrames.filter((frame: number) => frame === behaviorTickCounter).length > 0) {
+        flog(`damage state for: ${behaviorTickCounter}`, "handle damage state calc");
+        dealSamuraiBladeDamage(player, true);
+      }
+    }
+    behaviorTickCounter++;
   }
 
   if (player.IsExtraAnimationFinished() && isPlayerShooting(player) && canPlayerFireBlade(player)) {
@@ -43,6 +58,8 @@ function updatePlayerBladeBehavior(player: EntityPlayer) {
       hitChainProgression = 2;
       game.ShakeScreen(12);
       sfxManager.Play(SoundsCustom.SB_CHARGED_SLICE, 2, 0, false);
+      sfxManager.Play(SoundEffect.EXPLOSION_WEAK, 0.8, 0, false);
+      game.SpawnParticles(player.Position, EffectVariant.IMPACT, 25, 10);
     } else if (hitChainProgression === 2 && (isFinished(bladeSprite, Animations.FIRST_SWING) || isFinished(bladeSprite, Animations.CHARGED_SWING))) {
       bladeSprite.Play(Animations.SECOND_SWING, true);
       hitChainProgression = 3;
@@ -58,9 +75,16 @@ function updatePlayerBladeBehavior(player: EntityPlayer) {
     }
 
     if (canDealDamage) {
+      clearDamageState(player);
+      behaviorTickCounter = 0;
       const playerAimDir = player.GetAimDirection();
       getPlayerStateData(player).activeAimDirection = Vector(playerAimDir.X, playerAimDir.Y);
-      dealSamuraiBladeDamage(player);
+      // dealSamuraiBladeDamage(player);
+
+      const hitFrames = Tuneable.hitStateFrameDelays.get(hitChainProgression);
+      const hasHitOnZero = hitFrames !== undefined && hitFrames.filter((frame: number) => frame === 0).length > 0;
+      dealSamuraiBladeDamage(player, false);
+
       flog(`I can attack: ${getPlayerStateData(player).lastFireTime}`, "Blade");
       // Do entity damage, push etc etc etc.
     }
@@ -83,6 +107,8 @@ function updatePlayerBladeBehavior(player: EntityPlayer) {
           isPlayingOrFinishedSwitchToChargedIdle(bladeSprite)
         )
       ) {
+        clearDamageState(player);
+        behaviorTickCounter = 0;
         getPlayerStateData(player).hitChainProgression = 1;
         if (!isPlaying(bladeSprite, Animations.SWITCH_IDLE)) {
           bladeSprite.Play(Animations.SWITCH_IDLE, false);

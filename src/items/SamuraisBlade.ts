@@ -5,7 +5,7 @@ import { SoundsCustom } from "../enums/SoundsCustom";
 import { flog } from "../helpers/DebugHelper";
 import { playerHasSamuraisBladeItem } from "../helpers/Helpers";
 import { motivatePlayer } from "./samuraiBlade/onCache/Motivate";
-import { spawnGore } from "./samuraiBlade/onDealingDamage/SpawnGore";
+import { playerHitSound } from "./samuraiBlade/onDealingDamage/HitSound";
 import { printDebugText } from "./samuraiBlade/rendering/DebugText";
 import { renderBlades } from "./samuraiBlade/rendering/RenderBlade";
 import { updateBladeBehavior } from "./samuraiBlade/update/BladeBehavior";
@@ -39,7 +39,8 @@ export function SamuraiBladePostGameStarted(): void {
 }
 
 export function SamuraiBladeEntityDamage(tookDamage: Entity, damageAmount: number, damageFlags: BitFlag, damageSource: EntityRef, damageCountdownFrames: number): boolean {
-  spawnGore(tookDamage, damageAmount, damageFlags, damageSource, damageCountdownFrames);
+  // spawnGore(tookDamage, damageAmount, damageFlags, damageSource, damageCountdownFrames);
+  playerHitSound(tookDamage, damageAmount, damageFlags, damageSource, damageCountdownFrames);
   return true;
 }
 
