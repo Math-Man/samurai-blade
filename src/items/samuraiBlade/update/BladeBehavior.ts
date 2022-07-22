@@ -4,7 +4,7 @@ import { getPlayerStateData } from "../../../data/StateData";
 import { Tuneable } from "../../../data/Tuneable";
 import { CollectibleTypeCustom } from "../../../enums/CollectibleTypeCustom";
 import { SoundsCustom } from "../../../enums/SoundsCustom";
-import { Animations, isFinished, isPlaying, isPlayingOrFinishedSwitchToChargedIdle, isPlayingOrFinishedSwitchToIdle } from "../../../helpers/AnimationHelpers";
+import { Animations, isFinished, isPlaying, isPlayingOrFinishedIdle, isPlayingOrFinishedSwitchToChargedIdle, isPlayingOrFinishedSwitchToIdle } from "../../../helpers/AnimationHelpers";
 import { canPlayerFireBlade, getActualTimeToGoIdle, getAndUpdatePlayerBladeFireTime, getChargeTime } from "../../../helpers/BladeHelpers";
 import { flog } from "../../../helpers/DebugHelper";
 import { isPlayerShooting, playerHasSamuraisBladeItem } from "../../../helpers/Helpers";
@@ -27,6 +27,7 @@ let behaviorTickCounter = 0;
 function updatePlayerBladeBehavior(player: EntityPlayer) {
   disableShooting(player);
   const { bladeSprite } = getPlayerStateData(player);
+  let { hitChainProgression } = getPlayerStateData(player);
 
   if (!(isPlaying(bladeSprite, Animations.CHARGED_IDLE) || isPlayingOrFinishedSwitchToChargedIdle(bladeSprite) || isPlaying(bladeSprite, Animations.CHARGED_SWING))) {
     getPlayerStateData(player).charged = false;
@@ -46,7 +47,6 @@ function updatePlayerBladeBehavior(player: EntityPlayer) {
   if (player.IsExtraAnimationFinished() && isPlayerShooting(player) && canPlayerFireBlade(player)) {
     getAndUpdatePlayerBladeFireTime(player);
     let canDealDamage = true;
-    let { hitChainProgression } = getPlayerStateData(player);
 
     if ((hitChainProgression === 1 && (isPlaying(bladeSprite, Animations.IDLE) || isPlayingOrFinishedSwitchToIdle(bladeSprite))) || isFinished(bladeSprite, Animations.THIRD_SWING)) {
       bladeSprite.Play(Animations.FIRST_SWING, true);
@@ -60,12 +60,15 @@ function updatePlayerBladeBehavior(player: EntityPlayer) {
       sfxManager.Play(SoundsCustom.SB_CHARGED_SLICE, 2, 0, false);
       sfxManager.Play(SoundEffect.EXPLOSION_WEAK, 0.8, 0, false);
       game.SpawnParticles(player.Position, EffectVariant.IMPACT, 25, 10);
-    } else if (hitChainProgression === 2 && (isFinished(bladeSprite, Animations.FIRST_SWING) || isFinished(bladeSprite, Animations.CHARGED_SWING))) {
+    } else if (
+      hitChainProgression === 2 &&
+      (isFinished(bladeSprite, Animations.FIRST_SWING) || isFinished(bladeSprite, Animations.CHARGED_SWING) || isPlayingOrFinishedSwitchToIdle(bladeSprite) || isPlayingOrFinishedIdle(bladeSprite))
+    ) {
       bladeSprite.Play(Animations.SECOND_SWING, true);
       hitChainProgression = 3;
       sfxManager.Play(SoundsCustom.SB_SMALL_SLICE, 1, 0, false);
       game.ShakeScreen(3);
-    } else if (hitChainProgression === 3 && isFinished(bladeSprite, Animations.SECOND_SWING)) {
+    } else if (hitChainProgression === 3 && (isFinished(bladeSprite, Animations.SECOND_SWING) || isPlayingOrFinishedSwitchToIdle(bladeSprite) || isPlayingOrFinishedIdle(bladeSprite))) {
       bladeSprite.Play(Animations.THIRD_SWING, true);
       hitChainProgression = 1;
       sfxManager.Play(SoundsCustom.SB_BIG_SLICE, 1.5, 1, false);
@@ -83,7 +86,7 @@ function updatePlayerBladeBehavior(player: EntityPlayer) {
 
       const hitFrames = Tuneable.hitStateFrameDelays.get(hitChainProgression);
       const hasHitOnZero = hitFrames !== undefined && hitFrames.filter((frame: number) => frame === 0).length > 0;
-      dealSamuraiBladeDamage(player, false);
+      dealSamuraiBladeDamage(player, hasHitOnZero);
 
       flog(`I can attack: ${getPlayerStateData(player).lastFireTime}`, "Blade");
       // Do entity damage, push etc etc etc.
@@ -128,7 +131,6 @@ function updatePlayerBladeBehavior(player: EntityPlayer) {
         if (!isPlayingOrFinishedSwitchToChargedIdle(bladeSprite)) {
           bladeSprite.Play(Animations.SWITCH_CHARGED_IDLE, false);
           sfxManager.Play(SoundsCustom.SB_CHARGED_UP, 2, 0);
-          flog(`AM I PLAYING THIS TWICE??? ${bladeSprite.GetAnimation()}`, "SOUND TEST");
         }
 
         if (isFinished(bladeSprite, Animations.SWITCH_CHARGED_IDLE)) {

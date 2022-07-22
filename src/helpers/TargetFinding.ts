@@ -24,5 +24,9 @@ export function isHitTargetInsideArea(player: EntityPlayer, centerPosition: Vect
     error(`Attempting to pull wrong ranges. ${tostring(ranges)}`);
   }
 
+  // flog(`Range Checks: ${ranges[0]},${ranges[1]},
+  // Progression:${getPlayerStateData(player).hitChainProgression}, range: ${hitProduct}`, "RANGE
+  // CHECK");
+
   return hitProduct >= ranges[0] && hitProduct <= ranges[1];
 }

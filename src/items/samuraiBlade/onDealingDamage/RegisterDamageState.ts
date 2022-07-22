@@ -5,12 +5,11 @@ import { playerHasSamuraisBladeItem } from "../../../helpers/Helpers";
 export function registerDamageState(player: EntityPlayer, damagedEntity: Entity): void {
   if (playerHasSamuraisBladeItem(player)) {
     const containsEntity = getDamageState(player, damagedEntity);
-
     const entityHitCount = countOccurrencesOfState(player, damagedEntity);
-
     flog(`Contains entity: ${containsEntity} + ${damagedEntity.Index}, hit counts: ${entityHitCount}`, "registerDamageState");
 
     getPlayerStateData(player).hitStateEntities.push(damagedEntity.Index);
+    flog(`hit count ${entityHitCount}`, "HIT COUNTS");
   }
 }
 
