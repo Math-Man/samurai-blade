@@ -2,7 +2,7 @@ import { game } from "isaacscript-common";
 import { getPlayerStateData } from "../../../data/StateData";
 import { getActualTimeToGoIdle, getBladeDamage, getBladeFireDelay, getChargeTime } from "../../../helpers/BladeHelpers";
 import { getPlayerById, playerHasSamuraisBladeItem } from "../../../helpers/Helpers";
-import { aimTargetedDotValue } from "../../../helpers/Maths";
+import { aimTargetedDotValue, signedAngleBetween, signedAngleDotValue } from "../../../helpers/Maths";
 
 export function printDebugText(): void {
   const player = getPlayerById(0);
@@ -10,7 +10,6 @@ export function printDebugText(): void {
   Isaac.RenderText(`Player: ${player.Index}`, 68, 30, 0, 255, 255, 255);
   Isaac.RenderText(`Player Position : ${tostring(player.Position)}`, 68, 45, 0, 255, 255, 255);
   Isaac.RenderText(`Player Velocity : ${tostring(player.Velocity)}`, 68, 60, 0, 255, 255, 255);
-  Isaac.RenderText(`Player aim Dir  : ${player.GetAimDirection()}`, 68, 75, 0, 255, 255, 255);
 
   if (playerHasSamuraisBladeItem(player)) {
     const blade = getPlayerStateData(player).bladeSprite;
@@ -30,9 +29,15 @@ export function printDebugText(): void {
     Isaac.RenderText(`Swing : ${tostring(getPlayerStateData(player).hitChainProgression)}`, 280, 240, 255, 255, 255, 69);
   }
 
+  if (1 !== 1) {
+    return;
+  }
+
   const targets = Isaac.GetRoomEntities(); // getHitTargetsInsideArea(player, player.Position, player.GetAimDirection(), getBladePhysicalRange(player));
   for (const target of targets) {
     const targetScreenPos = Isaac.WorldToScreen(target.Position);
-    Isaac.RenderText(`DSoc:${tostring(aimTargetedDotValue(target.Position, player.Position, player.GetAimDirection()))}`, targetScreenPos.X, targetScreenPos.Y + 15, 75, 124, 0, 180);
+    Isaac.RenderText(`DSoc        :${tostring(aimTargetedDotValue(target.Position, player.Position, player.GetAimDirection()))}`, targetScreenPos.X, targetScreenPos.Y, 75, 124, 0, 180);
+    Isaac.RenderText(`SignedAngle :${tostring(signedAngleBetween(target.Position, player.Position))}`, targetScreenPos.X, targetScreenPos.Y + 15, 75, 124, 0, 180);
+    Isaac.RenderText(`SignedAngle :${tostring(signedAngleDotValue(target.Position, player.Position, player.GetAimDirection()))}`, targetScreenPos.X, targetScreenPos.Y + 30, 75, 124, 0, 180);
   }
 }
