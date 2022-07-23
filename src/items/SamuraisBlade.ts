@@ -1,12 +1,11 @@
 import { CacheFlag } from "isaac-typescript-definitions";
-import { getPlayers, sfxManager } from "isaacscript-common";
+import { getPlayers } from "isaacscript-common";
 import { flushAllStateData, getPlayerStateData } from "../data/StateData";
-import { SoundsCustom } from "../enums/SoundsCustom";
 import { flog } from "../helpers/DebugHelper";
 import { playerHasSamuraisBladeItem } from "../helpers/Helpers";
 import { motivatePlayer } from "./samuraiBlade/onCache/Motivate";
+import { playerHitSound } from "./samuraiBlade/onDealingDamage/HitSound";
 import { spawnGore } from "./samuraiBlade/onDealingDamage/SpawnGore";
-import { printDebugText } from "./samuraiBlade/rendering/DebugText";
 import { renderBlades } from "./samuraiBlade/rendering/RenderBlade";
 import { updateBladeBehavior } from "./samuraiBlade/update/BladeBehavior";
 
@@ -15,7 +14,7 @@ export function SamuraiBladePostUpdate(): void {
 }
 
 export function SamuraiBladePostRender(): void {
-  printDebugText();
+  // printDebugText();
   renderBlades();
 }
 
@@ -27,8 +26,9 @@ export function SamuraiBladePostNewRoom(): void {
   const realPlayers = getPlayers();
   for (const player of realPlayers) {
     if (playerHasSamuraisBladeItem(player)) {
-      getPlayerStateData(player).charged = true;
-      sfxManager.Play(SoundsCustom.SB_CHARGED_UP, 0.5, 0);
+      // getPlayerStateData(player).charged = true;
+      getPlayerStateData(player).lastFireTime = 0;
+      // sfxManager.Play(SoundsCustom.SB_CHARGED_UP, 0.5, 0);
     }
   }
 }
@@ -40,6 +40,7 @@ export function SamuraiBladePostGameStarted(): void {
 
 export function SamuraiBladeEntityDamage(tookDamage: Entity, damageAmount: number, damageFlags: BitFlag, damageSource: EntityRef, damageCountdownFrames: number): boolean {
   spawnGore(tookDamage, damageAmount, damageFlags, damageSource, damageCountdownFrames);
+  playerHitSound(tookDamage, damageAmount, damageFlags, damageSource, damageCountdownFrames);
   return true;
 }
 

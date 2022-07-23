@@ -5,6 +5,8 @@ interface PlayerState {
   hitChainProgression: int;
   activeAimDirection: Vector;
   charged: boolean;
+
+  hitStateEntities: number[]; // Entity indexes.
 }
 
 const StateData = new Map<int, PlayerState>();
@@ -29,6 +31,7 @@ export function getPlayerStateData(player: EntityPlayer): PlayerState {
       hitChainProgression: 1,
       activeAimDirection: Vector(0, 0),
       charged: false,
+      hitStateEntities: [],
     };
 
     // Load sprite data.

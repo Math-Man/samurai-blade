@@ -2,6 +2,7 @@ import { game } from "isaacscript-common";
 import { getPlayerStateData } from "../../../data/StateData";
 import { getActualTimeToGoIdle, getBladeDamage, getBladeFireDelay, getChargeTime } from "../../../helpers/BladeHelpers";
 import { getPlayerById, playerHasSamuraisBladeItem } from "../../../helpers/Helpers";
+import { aimTargetedDotValue, signedAngleBetween, signedAngleDotValue } from "../../../helpers/Maths";
 
 export function printDebugText(): void {
   const player = getPlayerById(0);
@@ -25,5 +26,18 @@ export function printDebugText(): void {
     Isaac.RenderText(`Fire Dly : ${tostring(getBladeFireDelay(player))}`, 280, 195, 255, 255, 255, 69);
     Isaac.RenderText(`Fire TTL : ${tostring(game.GetFrameCount() - (getPlayerStateData(player).lastFireTime + getBladeFireDelay(player)))}`, 280, 210, 255, 255, 255, 69);
     Isaac.RenderText(`TTGI : ${tostring(getActualTimeToGoIdle(player))}`, 280, 225, 255, 255, 255, 69);
+    Isaac.RenderText(`Swing : ${tostring(getPlayerStateData(player).hitChainProgression)}`, 280, 240, 255, 255, 255, 69);
+  }
+
+  if (1 !== 1) {
+    return;
+  }
+
+  const targets = Isaac.GetRoomEntities(); // getHitTargetsInsideArea(player, player.Position, player.GetAimDirection(), getBladePhysicalRange(player));
+  for (const target of targets) {
+    const targetScreenPos = Isaac.WorldToScreen(target.Position);
+    Isaac.RenderText(`DSoc        :${tostring(aimTargetedDotValue(target.Position, player.Position, player.GetAimDirection()))}`, targetScreenPos.X, targetScreenPos.Y, 75, 124, 0, 180);
+    Isaac.RenderText(`SignedAngle :${tostring(signedAngleBetween(target.Position, player.Position))}`, targetScreenPos.X, targetScreenPos.Y + 15, 75, 124, 0, 180);
+    Isaac.RenderText(`SignedAngle :${tostring(signedAngleDotValue(target.Position, player.Position, player.GetAimDirection()))}`, targetScreenPos.X, targetScreenPos.Y + 30, 75, 124, 0, 180);
   }
 }

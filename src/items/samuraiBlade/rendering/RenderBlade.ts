@@ -50,6 +50,7 @@ function renderUserBlade(sprite: Sprite, player: EntityPlayer) {
   ) {
     sprite.FlipX = false;
     sprite.Scale = getBladeSpriteScaleFromStats(player);
+    sprite.Offset = Vector(0, -8).add(getPlayerStateData(player).activeAimDirection.Resized(10));
   } else {
     sprite.Rotation = 25;
     sprite.Scale = Tuneable.IdleSize;

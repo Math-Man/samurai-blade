@@ -4,27 +4,36 @@ import { getPlayerStateData } from "../../../data/StateData";
 import { Tuneable } from "../../../data/Tuneable";
 import { DamageFlagsCustom } from "../../../enums/DamageFlagsCustom";
 import { getBladeDamage, getBladePhysicalRange } from "../../../helpers/BladeHelpers";
+import { flog } from "../../../helpers/DebugHelper";
 import { getHitTargetsInsideArea, isHitTargetInsideArea } from "../../../helpers/TargetFinding";
+import { countOccurrencesOfState, registerDamageState } from "../onDealingDamage/RegisterDamageState";
 
-export function dealSamuraiBladeDamage(player: EntityPlayer): void {
+export function dealSamuraiBladeDamage(player: EntityPlayer, doDamage: boolean): void {
   const targets = getHitTargetsInsideArea(player, player.Position, player.GetAimDirection(), getBladePhysicalRange(player));
-  let targetsCount = 1;
   for (const target of targets) {
     if (target.IsVulnerableEnemy() || target.Type === EntityType.FIREPLACE || target.Type === EntityType.BOMB) {
-      doEntityDamage(player, target, targetsCount);
-      pushEntityAway(player, target);
-      targetsCount++;
+      if (doDamage) {
+        const previousHitCountToSameEntity = countOccurrencesOfState(player, target);
+        flog(`hit count ${previousHitCountToSameEntity}, UNDEFINED: ${countOccurrencesOfState(player, target) === undefined}`, "HIT COUNTS FIRST");
+        if (countOccurrencesOfState(player, target) === undefined || countOccurrencesOfState(player, target) <= Tuneable.maxNumberOfHitsInOneSwingToSameEntity - 1) {
+          doEntityDamage(player, target, previousHitCountToSameEntity !== undefined ? previousHitCountToSameEntity : 0);
+        }
+        // Pushing shouldn't care about the damage state. It looks really awkward to have one enemy
+        // getting pushed and others not.
+        pushEntityAway(player, target);
+        registerDamageState(player, target);
+      }
     }
   }
   doTileDamage(player);
 }
 
-export function doEntityDamage(player: EntityPlayer, entity: Entity, index: int): void {
-  entity.TakeDamage(getBladeDamage(player) * Tuneable.DamageModifierForEachEnemyHit ** index, DamageFlagsCustom.SB_BLADE_DAMAGE, EntityRef(player), 0);
+export function doEntityDamage(player: EntityPlayer, entity: Entity, index: number): void {
+  entity.TakeDamage(getBladeDamage(player) * Tuneable.DamageModifierForHittingSameEnemy ** index, DamageFlagsCustom.SB_BLADE_DAMAGE, EntityRef(player), 0);
 }
 
 export function pushEntityAway(player: EntityPlayer, entity: Entity): void {
-  const diff = entity.Position.sub(player.Position);
+  const diff = entity.Position.sub(player.Position).Normalized();
   if (getPlayerStateData(player).charged) {
     diff.Resize(2);
   }
