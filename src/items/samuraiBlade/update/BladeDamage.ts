@@ -6,23 +6,21 @@ import { DamageFlagsCustom } from "../../../enums/DamageFlagsCustom";
 import { getBladeDamage, getBladePhysicalRange } from "../../../helpers/BladeHelpers";
 import { flog } from "../../../helpers/DebugHelper";
 import { getHitTargetsInsideArea, isHitTargetInsideArea } from "../../../helpers/TargetFinding";
-import { countOccurrencesOfState, registerDamageState } from "../onDealingDamage/RegisterDamageState";
+import { countOccurrencesOfState, registerDamageState } from "../onDealingDamage/DamageStateHandler";
 
-export function dealSamuraiBladeDamage(player: EntityPlayer, doDamage: boolean): void {
+export function dealSamuraiBladeDamage(player: EntityPlayer): void {
   const targets = getHitTargetsInsideArea(player, player.Position, player.GetAimDirection(), getBladePhysicalRange(player));
   for (const target of targets) {
     if (target.IsVulnerableEnemy() || target.Type === EntityType.FIREPLACE || target.Type === EntityType.BOMB) {
-      if (doDamage) {
-        const previousHitCountToSameEntity = countOccurrencesOfState(player, target);
-        flog(`hit count ${previousHitCountToSameEntity}, UNDEFINED: ${countOccurrencesOfState(player, target) === undefined}`, "HIT COUNTS FIRST");
-        if (countOccurrencesOfState(player, target) === undefined || countOccurrencesOfState(player, target) <= Tuneable.maxNumberOfHitsInOneSwingToSameEntity - 1) {
-          doEntityDamage(player, target, previousHitCountToSameEntity !== undefined ? previousHitCountToSameEntity : 0);
-        }
-        // Pushing shouldn't care about the damage state. It looks really awkward to have one enemy
-        // getting pushed and others not.
-        pushEntityAway(player, target);
-        registerDamageState(player, target);
+      const previousHitCountToSameEntity = countOccurrencesOfState(player, target);
+      flog(`hit count ${previousHitCountToSameEntity}, UNDEFINED: ${countOccurrencesOfState(player, target) === undefined}`, "HIT COUNTS FIRST ?????????????????????");
+      if (countOccurrencesOfState(player, target) === undefined || countOccurrencesOfState(player, target) <= Tuneable.maxNumberOfHitsInOneSwingToSameEntity - 1) {
+        doEntityDamage(player, target, previousHitCountToSameEntity !== undefined ? previousHitCountToSameEntity : 0);
       }
+      // Pushing shouldn't care about the damage state. It looks really awkward to have one enemy
+      // getting pushed and others not.
+      pushEntityAway(player, target);
+      registerDamageState(player, target);
     }
   }
   doTileDamage(player);

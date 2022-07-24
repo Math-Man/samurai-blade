@@ -14,7 +14,7 @@ interface ITuneable {
   StatFireRate: float;
   StatShotSpeed: float;
   IdleSize: Vector;
-  hitStateFrameDelays: Map<int, int[]>; // Hits all entities after given number of frames have passed since player started attacking in the int array, for all elements. Can't hit same entity twice.
+  hitStateFrames: Map<int, int[]>; // Hits all entities after given number of frames have passed since player started attacking in the int array, for all elements. Can't hit same entity twice.
   maxNumberOfHitsInOneSwingToSameEntity: number;
 }
 
@@ -48,7 +48,7 @@ export const Tuneable: ITuneable = {
   StatFireRate: 1,
   StatShotSpeed: 0.5,
   IdleSize: Vector(0.6, 0.6),
-  hitStateFrameDelays: new Map<int, int[]>([
+  hitStateFrames: new Map<int, int[]>([
     [1, [0, 1, 2, 3, 4]],
     [2, [0, 1, 2, 3, 4]],
     [3, [0, 1, 2, 3, 4, 5]],

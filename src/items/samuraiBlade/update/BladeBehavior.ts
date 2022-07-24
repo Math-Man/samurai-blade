@@ -5,10 +5,18 @@ import { Tuneable } from "../../../data/Tuneable";
 import { CollectibleTypeCustom } from "../../../enums/CollectibleTypeCustom";
 import { SoundsCustom } from "../../../enums/SoundsCustom";
 import { Animations, isFinished, isPlaying, isPlayingOrFinishedIdle, isPlayingOrFinishedSwitchToChargedIdle, isPlayingOrFinishedSwitchToIdle } from "../../../helpers/AnimationHelpers";
-import { canPlayerFireBlade, getActualTimeToGoIdle, getAndUpdatePlayerBladeFireTime, getChargeTime } from "../../../helpers/BladeHelpers";
+import {
+  canPlayerFireBlade,
+  getActualTimeToGoIdle,
+  getAndUpdatePlayerBladeFireTime,
+  getChargeTime,
+  getNextPlayerStateFromAnimation,
+  hasPlayerExitedAttackState,
+  isPlayerInAttackState,
+} from "../../../helpers/BladeHelpers";
 import { flog } from "../../../helpers/DebugHelper";
 import { isPlayerShooting, playerHasSamuraisBladeItem } from "../../../helpers/Helpers";
-import { clearDamageState, hasDamageState } from "../onDealingDamage/RegisterDamageState";
+import { clearDamageState } from "../onDealingDamage/DamageStateHandler";
 import { dealSamuraiBladeDamage } from "./BladeDamage";
 
 export function updateBladeBehavior(): void {
@@ -33,18 +41,7 @@ function updatePlayerBladeBehavior(player: EntityPlayer) {
     getPlayerStateData(player).charged = false;
   }
 
-  if (hasDamageState(player)) {
-    const hitFrames = Tuneable.hitStateFrameDelays.get(getPlayerStateData(player).hitChainProgression);
-    if (hitFrames !== undefined) {
-      if (hitFrames.filter((frame: number) => frame === behaviorTickCounter).length > 0) {
-        flog(`damage state for: ${behaviorTickCounter}`, "handle damage state calc");
-        dealSamuraiBladeDamage(player, true);
-      }
-    }
-    behaviorTickCounter++;
-  }
-
-  if (player.IsExtraAnimationFinished() && isPlayerShooting(player) && canPlayerFireBlade(player)) {
+  if (player.IsExtraAnimationFinished() && isPlayerShooting(player) && canPlayerFireBlade(player, bladeSprite)) {
     getAndUpdatePlayerBladeFireTime(player);
     let canDealDamage = true;
 
@@ -84,14 +81,13 @@ function updatePlayerBladeBehavior(player: EntityPlayer) {
       getPlayerStateData(player).activeAimDirection = Vector(playerAimDir.X, playerAimDir.Y);
       // dealSamuraiBladeDamage(player);
 
-      const hitFrames = Tuneable.hitStateFrameDelays.get(hitChainProgression);
-      const hasHitOnZero = hitFrames !== undefined && hitFrames.filter((frame: number) => frame === 0).length > 0;
-      dealSamuraiBladeDamage(player, hasHitOnZero);
+      // const hasHitOnZero = hitFrames !== undefined && hitFrames.filter((frame: number) => frame
+      // === 0).length > 0; dealSamuraiBladeDamage(player, hasHitOnZero);
 
       flog(`I can attack: ${getPlayerStateData(player).lastFireTime}`, "Blade");
       // Do entity damage, push etc etc etc.
     }
-    getPlayerStateData(player).hitChainProgression = hitChainProgression;
+    // getPlayerStateData(player).hitChainProgression = hitChainProgression;
   } else {
     // Player is idling.
     const { lastFireTime } = getPlayerStateData(player);
@@ -138,6 +134,20 @@ function updatePlayerBladeBehavior(player: EntityPlayer) {
         }
       }
     }
+  }
+
+  if (isPlayerInAttackState(bladeSprite)) {
+    flog(`Animation : ${bladeSprite.GetAnimation()} ${bladeSprite.GetFrame()}`, "OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO");
+    const canHitThisFrame = Tuneable.hitStateFrames.get(getPlayerStateData(player).hitChainProgression)?.includes(bladeSprite.GetFrame());
+    if (canHitThisFrame ?? false) {
+      dealSamuraiBladeDamage(player);
+    }
+  }
+
+  if (hasPlayerExitedAttackState(bladeSprite)) {
+    const nextHitChainState = getNextPlayerStateFromAnimation(bladeSprite);
+    flog(`Animation : ${bladeSprite.GetAnimation()} ${bladeSprite.GetFrame()} ok : ${nextHitChainState}`, "PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP");
+    getPlayerStateData(player).hitChainProgression = nextHitChainState;
   }
 }
 
