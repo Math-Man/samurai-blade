@@ -1,5 +1,8 @@
-import { EntityType } from "isaac-typescript-definitions";
-import { game } from "isaacscript-common";
+// Compiler messes up nil checks in reduce statements. This why we add this exclude.
+/* eslint-disable @typescript-eslint/no-unnecessary-condition */
+
+import { EntityType, LineCheckMode } from "isaac-typescript-definitions";
+import { clamp, game, getRandomInt } from "isaacscript-common";
 import { getPlayerStateData } from "../../../data/StateData";
 import { Tuneable } from "../../../data/Tuneable";
 import { DamageFlagsCustom } from "../../../enums/DamageFlagsCustom";
@@ -7,27 +10,48 @@ import { getBladeDamage, getBladePhysicalRange } from "../../../helpers/BladeHel
 import { flog } from "../../../helpers/DebugHelper";
 import { getHitTargetsInsideArea, isHitTargetInsideArea } from "../../../helpers/TargetFinding";
 import { countOccurrencesOfState, registerDamageState } from "../onDealingDamage/DamageStateHandler";
+import { spawnSecretTear } from "../onDealingDamage/SecretTearSpawner";
+import { handleTearCountSynergies, hasSpectral } from "../synergy/SynergyHandlers";
+
+const LOG_ID = "BladeDamage";
 
 export function dealSamuraiBladeDamage(player: EntityPlayer): void {
   const targets = getHitTargetsInsideArea(player, player.Position, player.GetAimDirection(), getBladePhysicalRange(player));
   for (const target of targets) {
     if (target.IsVulnerableEnemy() || target.Type === EntityType.FIREPLACE || target.Type === EntityType.BOMB) {
       const previousHitCountToSameEntity = countOccurrencesOfState(player, target);
-      flog(`hit count ${previousHitCountToSameEntity}, UNDEFINED: ${countOccurrencesOfState(player, target) === undefined}`, "HIT COUNTS FIRST ?????????????????????");
-      if (countOccurrencesOfState(player, target) === undefined || countOccurrencesOfState(player, target) <= Tuneable.maxNumberOfHitsInOneSwingToSameEntity - 1) {
-        doEntityDamage(player, target, previousHitCountToSameEntity !== undefined ? previousHitCountToSameEntity : 0);
+      flog(`hit count ${previousHitCountToSameEntity}, UNDEFINED: ${countOccurrencesOfState(player, target) === undefined}`, LOG_ID);
+      if (LOSCheck(player, target) && (countOccurrencesOfState(player, target) === undefined || countOccurrencesOfState(player, target) <= Tuneable.maxNumberOfHitsInOneSwingToSameEntity - 1)) {
+        // Do the damage related things once.
+        doEntityDamage(player, target, previousHitCountToSameEntity !== undefined ? previousHitCountToSameEntity : 0, 0, 1, 0);
+        spawnSecretTear(player, target);
+
+        // Handle tear count synergies.
+        const tearCountSynergy = getRandomInt(0, handleTearCountSynergies(player));
+        flog(`Extra hits count : ${tearCountSynergy}`, LOG_ID);
+        for (let i = 0; i < tearCountSynergy; i++) {
+          doEntityDamage(player, target, previousHitCountToSameEntity !== undefined ? previousHitCountToSameEntity : 0, i + 1, clamp(1.2 / tearCountSynergy, 0, 1), 0.1);
+          spawnSecretTear(player, target);
+        }
       }
       // Pushing shouldn't care about the damage state. It looks really awkward to have one enemy
       // getting pushed and others not.
-      pushEntityAway(player, target);
-      registerDamageState(player, target);
+      if (LOSCheck(player, target)) {
+        pushEntityAway(player, target);
+        registerDamageState(player, target);
+      }
     }
   }
   doTileDamage(player);
 }
 
-export function doEntityDamage(player: EntityPlayer, entity: Entity, index: number): void {
-  entity.TakeDamage(getBladeDamage(player) * Tuneable.DamageModifierForHittingSameEnemy ** index, DamageFlagsCustom.SB_BLADE_DAMAGE, EntityRef(player), 0);
+export function doEntityDamage(player: EntityPlayer, entity: Entity, index: number, damageDelay: number, damageModifier: float, flatDamageIncrease: number): void {
+  entity.TakeDamage(
+    flatDamageIncrease + getBladeDamage(player) * damageModifier * Tuneable.DamageModifierForHittingSameEnemy ** index,
+    DamageFlagsCustom.SB_BLADE_DAMAGE,
+    EntityRef(player),
+    damageDelay,
+  );
 }
 
 export function pushEntityAway(player: EntityPlayer, entity: Entity): void {
@@ -54,4 +78,9 @@ export function doTileDamage(player: EntityPlayer): void {
       room.DamageGrid(gridEntity.GetGridIndex(), gridDamage);
     }
   }
+}
+
+export function LOSCheck(player: EntityPlayer, target: Entity): boolean {
+  flog(`hit count ${game.GetRoom().CheckLine(player.Position, target.Position, LineCheckMode.ECONOMIC)[0]}`, LOG_ID);
+  return hasSpectral(player) || game.GetRoom().CheckLine(player.Position, target.Position, LineCheckMode.ECONOMIC)[0];
 }

@@ -8,6 +8,7 @@ import { postNewRoomInit } from "./callbacks/MCPostNewRoom";
 import { postRenderInit } from "./callbacks/MCPostRender";
 import { postRenderPickupInit } from "./callbacks/MCPostRenderPickup";
 import { postRenderPlayerInit } from "./callbacks/MCPostRenderPlayer";
+import { postTearUpdateInit } from "./callbacks/MCPostTearUpdate";
 import { postUpdateInit } from "./callbacks/MCPostUpdate";
 
 const MOD_NAME = "samurai-blade";
@@ -34,4 +35,5 @@ function registerCallbacks(mod: ModUpgraded) {
   postRenderPlayerInit(mod);
   postRenderPickupInit(mod);
   postItemPickupInit(mod);
+  postTearUpdateInit(mod);
 }

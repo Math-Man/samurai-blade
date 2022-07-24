@@ -4,6 +4,8 @@ import { Tuneable } from "../data/Tuneable";
 import { Animations, isFinished, isPlaying } from "./AnimationHelpers";
 import { flog } from "./DebugHelper";
 
+const LOG_ID = "BladeHelpers";
+
 export function getBladeSpriteScaleFromStats(player: EntityPlayer): Vector {
   const { charged } = getPlayerStateData(player);
   let scaleMultiplier = (1 + (player.TearRange / 40) * Tuneable.StatRange * 0.02) * Tuneable.StatRangeVisual;
@@ -64,7 +66,7 @@ export function canPlayerFireBlade(player: EntityPlayer, bladeSprite: Sprite): b
   }
 
   if (bladeSprite.IsFinished(bladeSprite.GetAnimation())) {
-    flog("Animation finished so that the player can fire.", "ANIMATION FINISH CAN PLAYER FIRE BLADE CHECK");
+    flog("Animation finished so that the player can fire.", LOG_ID);
   }
 
   return math.abs(game.GetFrameCount() - getPlayerStateData(player).lastFireTime) >= firingDelay;
@@ -77,7 +79,7 @@ export function getChargeTime(player: EntityPlayer): number {
 
 export function getActualTimeToGoIdle(player: EntityPlayer): number {
   const fireDelay = getBladeFireDelay(player);
-  return Tuneable.TimeToGoIdleFrames <= getBladeFireDelay(player) ? fireDelay + 10 : Tuneable.TimeToGoIdleFrames;
+  return Tuneable.TimeToGoIdleFrames <= getBladeFireDelay(player) ? fireDelay + 5 : Tuneable.TimeToGoIdleFrames;
 }
 
 export function isPlayerInAttackState(bladeSprite: Sprite): boolean {

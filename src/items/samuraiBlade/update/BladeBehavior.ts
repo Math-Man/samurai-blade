@@ -19,6 +19,8 @@ import { isPlayerShooting, playerHasSamuraisBladeItem } from "../../../helpers/H
 import { clearDamageState } from "../onDealingDamage/DamageStateHandler";
 import { dealSamuraiBladeDamage } from "./BladeDamage";
 
+const LOG_ID = "BladeBehavior";
+
 export function updateBladeBehavior(): void {
   spawnItemFirstFrame();
 
@@ -79,15 +81,13 @@ function updatePlayerBladeBehavior(player: EntityPlayer) {
       behaviorTickCounter = 0;
       const playerAimDir = player.GetAimDirection();
       getPlayerStateData(player).activeAimDirection = Vector(playerAimDir.X, playerAimDir.Y);
-      // dealSamuraiBladeDamage(player);
-
-      // const hasHitOnZero = hitFrames !== undefined && hitFrames.filter((frame: number) => frame
-      // === 0).length > 0; dealSamuraiBladeDamage(player, hasHitOnZero);
-
-      flog(`I can attack: ${getPlayerStateData(player).lastFireTime}`, "Blade");
-      // Do entity damage, push etc etc etc.
+      flog(
+        `I can attack: ${getPlayerStateData(player).lastFireTime} R:${game.GetFrameCount() - getPlayerStateData(player).lastFireTime} D:${Tuneable.FireDelayByProgressionStage.get(
+          getPlayerStateData(player).hitChainProgression,
+        )}`,
+        LOG_ID,
+      );
     }
-    // getPlayerStateData(player).hitChainProgression = hitChainProgression;
   } else {
     // Player is idling.
     const { lastFireTime } = getPlayerStateData(player);
@@ -137,7 +137,6 @@ function updatePlayerBladeBehavior(player: EntityPlayer) {
   }
 
   if (isPlayerInAttackState(bladeSprite)) {
-    flog(`Animation : ${bladeSprite.GetAnimation()} ${bladeSprite.GetFrame()}`, "OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO");
     const canHitThisFrame = Tuneable.hitStateFrames.get(getPlayerStateData(player).hitChainProgression)?.includes(bladeSprite.GetFrame());
     if (canHitThisFrame ?? false) {
       dealSamuraiBladeDamage(player);
@@ -146,7 +145,6 @@ function updatePlayerBladeBehavior(player: EntityPlayer) {
 
   if (hasPlayerExitedAttackState(bladeSprite)) {
     const nextHitChainState = getNextPlayerStateFromAnimation(bladeSprite);
-    flog(`Animation : ${bladeSprite.GetAnimation()} ${bladeSprite.GetFrame()} ok : ${nextHitChainState}`, "PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP");
     getPlayerStateData(player).hitChainProgression = nextHitChainState;
   }
 }
