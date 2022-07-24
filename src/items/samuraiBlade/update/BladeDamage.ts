@@ -81,6 +81,20 @@ export function doTileDamage(player: EntityPlayer): void {
 }
 
 export function LOSCheck(player: EntityPlayer, target: Entity): boolean {
+  if (IsLOSIgnoreType(target.Type)) {
+    return true;
+  }
   flog(`hit count ${game.GetRoom().CheckLine(player.Position, target.Position, LineCheckMode.ECONOMIC)[0]}`, LOG_ID);
   return hasSpectral(player) || game.GetRoom().CheckLine(player.Position, target.Position, LineCheckMode.ECONOMIC)[0];
+}
+
+export function IsLOSIgnoreType(type: EntityType): boolean {
+  switch (type) {
+    case EntityType.WALL_CREEP:
+    case EntityType.RAGE_CREEP:
+    case EntityType.THE_THING:
+      return true;
+    default:
+      return false;
+  }
 }
