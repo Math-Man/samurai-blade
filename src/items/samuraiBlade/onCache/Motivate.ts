@@ -5,5 +5,5 @@ import { flog } from "../../../helpers/DebugHelper";
 
 export function motivatePlayer(player: EntityPlayer, cacheFlag: CacheFlag): void {
   flog(`Play pickup sound${tostring(player)}${tostring(cacheFlag)}`, "motivatePlayer");
-  sfxManager.Play(SoundsCustom.SB_PICKUP_BLADE);
+  sfxManager.Play(SoundsCustom.SB_PICKUP_BLADE, 3, 1);
 }
