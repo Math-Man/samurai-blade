@@ -1,6 +1,10 @@
 import { clamp, game } from "isaacscript-common";
 import { getPlayerStateData } from "../data/StateData";
 import { Tuneable } from "../data/Tuneable";
+import { Animations, isFinished, isPlaying } from "./AnimationHelpers";
+import { flog } from "./DebugHelper";
+
+const LOG_ID = "BladeHelpers";
 
 export function getBladeSpriteScaleFromStats(player: EntityPlayer): Vector {
   const { charged } = getPlayerStateData(player);
@@ -50,7 +54,7 @@ export function getAndUpdatePlayerBladeFireTime(player: EntityPlayer): number {
   return lastFireTime;
 }
 
-export function canPlayerFireBlade(player: EntityPlayer): boolean {
+export function canPlayerFireBlade(player: EntityPlayer, bladeSprite: Sprite): boolean {
   if (getPlayerStateData(player).lastFireTime === -1) {
     getPlayerStateData(player).lastFireTime = 0;
   }
@@ -59,6 +63,10 @@ export function canPlayerFireBlade(player: EntityPlayer): boolean {
 
   if (firingDelay === undefined) {
     error("Invalid hit chain progression value");
+  }
+
+  if (bladeSprite.IsFinished(bladeSprite.GetAnimation())) {
+    flog("Animation finished so that the player can fire.", LOG_ID);
   }
 
   return math.abs(game.GetFrameCount() - getPlayerStateData(player).lastFireTime) >= firingDelay;
@@ -71,5 +79,51 @@ export function getChargeTime(player: EntityPlayer): number {
 
 export function getActualTimeToGoIdle(player: EntityPlayer): number {
   const fireDelay = getBladeFireDelay(player);
-  return Tuneable.TimeToGoIdleFrames <= getBladeFireDelay(player) ? fireDelay + 10 : Tuneable.TimeToGoIdleFrames;
+  return Tuneable.TimeToGoIdleFrames <= getBladeFireDelay(player) ? fireDelay + 5 : Tuneable.TimeToGoIdleFrames;
+}
+
+export function isPlayerInAttackState(bladeSprite: Sprite): boolean {
+  return (
+    isPlaying(bladeSprite, Animations.FIRST_SWING) ||
+    isPlaying(bladeSprite, Animations.SECOND_SWING) ||
+    isPlaying(bladeSprite, Animations.THIRD_SWING) ||
+    isPlaying(bladeSprite, Animations.CHARGED_SWING)
+  );
+}
+
+export function hasPlayerExitedAttackState(bladeSprite: Sprite): boolean {
+  return (
+    isFinished(bladeSprite, Animations.FIRST_SWING) ||
+    isFinished(bladeSprite, Animations.SECOND_SWING) ||
+    isFinished(bladeSprite, Animations.THIRD_SWING) ||
+    isFinished(bladeSprite, Animations.CHARGED_SWING)
+  );
+}
+
+export function getPlayerStateFromAnimation(bladeSprite: Sprite): int {
+  switch (bladeSprite.GetAnimation()) {
+    case Animations.FIRST_SWING:
+    case Animations.CHARGED_SWING:
+      return 1;
+    case Animations.SECOND_SWING:
+      return 2;
+    case Animations.THIRD_SWING:
+      return 3;
+    default:
+      error("SOMETHING WENT TERRIBLY WRONG OH GOD.");
+  }
+}
+
+export function getNextPlayerStateFromAnimation(bladeSprite: Sprite): int {
+  switch (bladeSprite.GetAnimation()) {
+    case Animations.FIRST_SWING:
+    case Animations.CHARGED_SWING:
+      return 2;
+    case Animations.SECOND_SWING:
+      return 3;
+    case Animations.THIRD_SWING:
+      return 1;
+    default:
+      error("SOMETHING WENT TERRIBLY WRONG OH GOD.");
+  }
 }

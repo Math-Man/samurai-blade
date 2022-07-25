@@ -6,6 +6,7 @@ export function getEnemyVisualType(entityType: number, variant: number): EnemyVi
     case EntityType.GREED_GAPER:
     case EntityType.EXORCIST:
     case EntityType.KNIGHT:
+    case EntityType.HORF:
       return EnemyVisualType.BONE_AND_BLOOD;
 
     case EntityType.NECRO:
@@ -15,7 +16,6 @@ export function getEnemyVisualType(entityType: number, variant: number): EnemyVi
       return EnemyVisualType.BONE;
 
     case EntityType.GAPER_L2:
-    case EntityType.HORF:
     case EntityType.GUSHER:
     case EntityType.TWITCHY:
     case EntityType.BLACK_GLOBIN:

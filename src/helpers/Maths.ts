@@ -11,8 +11,5 @@ export function signedAngleBetween(vec1: Vector, vec2: Vector): float {
 }
 
 export function signedAngleDotValue(targetPosition: Vector, playerPosition: Vector, playerAimDirection: Vector): float {
-  return aimTargetedDotValue(targetPosition, playerAimDirection, playerAimDirection) * Math.sign(signedAngleBetween(targetPosition, playerPosition)) * playerAimDirection.X < 0 ||
-    playerAimDirection.Y > 0
-    ? -1.0
-    : 1.0;
+  return aimTargetedDotValue(targetPosition, playerAimDirection, playerAimDirection) * Math.sign(signedAngleBetween(targetPosition, playerPosition)) * playerAimDirection.X < 0 || playerAimDirection.Y > 0 ? -1.0 : 1.0;
 }
