@@ -9,6 +9,7 @@ export function printDebugText(): void {
   Isaac.RenderText(`Player: ${player.Index}`, 68, 30, 0, 255, 255, 255);
   Isaac.RenderText(`Player Position : ${tostring(player.Position)}`, 68, 45, 0, 255, 255, 255);
   Isaac.RenderText(`Player Velocity : ${tostring(player.Velocity)}`, 68, 60, 0, 255, 255, 255);
+  Isaac.RenderText(`Player AimDir : ${tostring(player.GetAimDirection())}`, 68, 75, 0, 255, 255, 255);
 
   if (playerHasSamuraisBladeItem(player)) {
     const blade = getPlayerStateData(player).bladeSprite;
