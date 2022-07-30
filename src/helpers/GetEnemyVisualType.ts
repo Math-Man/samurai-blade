@@ -24,6 +24,9 @@ export function getEnemyVisualType(entityType: number, variant: number): EnemyVi
     case EntityType.TAR_BOY:
       return EnemyVisualType.DEFAULT_BLOOD_BLACK;
 
+    case EntityType.SPLASHER:
+      return EnemyVisualType.DEFAULT_BLOOD_GREEN;
+
     case EntityType.DUMP:
     case EntityType.CLOGGY:
     case EntityType.DINGA:
@@ -32,6 +35,21 @@ export function getEnemyVisualType(entityType: number, variant: number): EnemyVi
     case EntityType.SQUIRT:
     case EntityType.SPLURT:
       return EnemyVisualType.POOP;
+
+    case EntityType.BLASTER:
+    case EntityType.QUAKEY:
+    case EntityType.HARDY:
+      return EnemyVisualType.STONE;
+
+    case EntityType.CLICKETY_CLACK:
+    case EntityType.BIG_BONY:
+    case EntityType.DEATHS_HEAD:
+      return EnemyVisualType.BONE;
+
+    case EntityType.WIZOOB:
+      return EnemyVisualType.GHOST;
+
+    // Variant specific effects:
     case EntityType.GURGLE:
       switch (variant) {
         case 0:
@@ -71,14 +89,6 @@ export function getEnemyVisualType(entityType: number, variant: number): EnemyVi
       }
       break;
 
-    case EntityType.BLASTER:
-    case EntityType.QUAKEY:
-    case EntityType.HARDY:
-      return EnemyVisualType.STONE;
-
-    case EntityType.SPLASHER:
-      return EnemyVisualType.DEFAULT_BLOOD_GREEN;
-
     case EntityType.CLOTTY:
       switch (variant) {
         case 1:
@@ -100,11 +110,6 @@ export function getEnemyVisualType(entityType: number, variant: number): EnemyVi
           return EnemyVisualType.DEFAULT_BLOOD_BLACK;
       }
       break;
-
-    case EntityType.CLICKETY_CLACK:
-    case EntityType.BIG_BONY:
-    case EntityType.DEATHS_HEAD:
-      return EnemyVisualType.BONE;
 
     case EntityType.HOST:
       switch (variant) {
@@ -137,9 +142,6 @@ export function getEnemyVisualType(entityType: number, variant: number): EnemyVi
           return EnemyVisualType.GHOST;
       }
       break;
-
-    case EntityType.WIZOOB:
-      return EnemyVisualType.GHOST;
 
     default:
       return EnemyVisualType.DEFAULT_BLOOD;

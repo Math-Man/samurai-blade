@@ -6,12 +6,15 @@ import { flog } from "./DebugHelper";
 
 const LOG_ID = "BladeHelpers";
 
+const RANGE_CONVERSION_FACTOR = 40;
+const CHARGE_VALUE_MODIFIER_FACTOR = 0.5;
+
 export function getBladeSpriteScaleFromStats(player: EntityPlayer): Vector {
   const { charged } = getPlayerStateData(player);
   let scaleMultiplier = (1 + (player.TearRange / 40) * Tuneable.StatRange * 0.02) * Tuneable.StatRangeVisual;
 
   if (charged) {
-    scaleMultiplier += scaleMultiplier * 0.5;
+    scaleMultiplier += scaleMultiplier * CHARGE_VALUE_MODIFIER_FACTOR;
   }
 
   return Vector(scaleMultiplier, scaleMultiplier);
@@ -19,10 +22,10 @@ export function getBladeSpriteScaleFromStats(player: EntityPlayer): Vector {
 
 export function getBladePhysicalRange(player: EntityPlayer): float {
   const { charged } = getPlayerStateData(player);
-  let calculatedRange = (Tuneable.BaseRange + (player.TearRange / 40) * Tuneable.StatDamage) * Tuneable.StatRangePhysical;
+  let calculatedRange = (Tuneable.BaseRange + (player.TearRange / RANGE_CONVERSION_FACTOR) * Tuneable.StatDamage) * Tuneable.StatRangePhysical;
 
   if (charged) {
-    calculatedRange += calculatedRange * 0.5;
+    calculatedRange += calculatedRange * CHARGE_VALUE_MODIFIER_FACTOR;
   }
   return calculatedRange;
 }
@@ -35,7 +38,7 @@ export function getBladeDamage(player: EntityPlayer): float {
   }
   let damageVal = damage + player.Damage * 0.8;
   if (charged) {
-    damageVal *= 1.5;
+    damageVal *= 1 + CHARGE_VALUE_MODIFIER_FACTOR;
   }
   return damageVal;
 }
@@ -83,21 +86,11 @@ export function getActualTimeToGoIdle(player: EntityPlayer): number {
 }
 
 export function isPlayerInAttackState(bladeSprite: Sprite): boolean {
-  return (
-    isPlaying(bladeSprite, Animations.FIRST_SWING) ||
-    isPlaying(bladeSprite, Animations.SECOND_SWING) ||
-    isPlaying(bladeSprite, Animations.THIRD_SWING) ||
-    isPlaying(bladeSprite, Animations.CHARGED_SWING)
-  );
+  return isPlaying(bladeSprite, Animations.FIRST_SWING) || isPlaying(bladeSprite, Animations.SECOND_SWING) || isPlaying(bladeSprite, Animations.THIRD_SWING) || isPlaying(bladeSprite, Animations.CHARGED_SWING);
 }
 
 export function hasPlayerExitedAttackState(bladeSprite: Sprite): boolean {
-  return (
-    isFinished(bladeSprite, Animations.FIRST_SWING) ||
-    isFinished(bladeSprite, Animations.SECOND_SWING) ||
-    isFinished(bladeSprite, Animations.THIRD_SWING) ||
-    isFinished(bladeSprite, Animations.CHARGED_SWING)
-  );
+  return isFinished(bladeSprite, Animations.FIRST_SWING) || isFinished(bladeSprite, Animations.SECOND_SWING) || isFinished(bladeSprite, Animations.THIRD_SWING) || isFinished(bladeSprite, Animations.CHARGED_SWING);
 }
 
 export function getPlayerStateFromAnimation(bladeSprite: Sprite): int {

@@ -31,9 +31,7 @@ export function SamuraiBladePostNewRoom(): void {
   const realPlayers = getPlayers();
   for (const player of realPlayers) {
     if (playerHasSamuraisBladeItem(player)) {
-      // getPlayerStateData(player).charged = true;
       getPlayerStateData(player).lastFireTime = 0;
-      // sfxManager.Play(SoundsCustom.SB_CHARGED_UP, 0.5, 0);
     }
   }
 }

@@ -1,4 +1,5 @@
 import { TearFlag, TearVariant } from "isaac-typescript-definitions";
+import { logTearFlags } from "isaacscript-common";
 import { flog } from "../../../helpers/DebugHelper";
 
 export function spawnSecretTear(player: EntityPlayer, targetEntity: Entity): void {
@@ -16,5 +17,6 @@ export function spawnSecretTear(player: EntityPlayer, targetEntity: Entity): voi
   // body, it looks like an intended effect.
   tear.ChangeVariant(TearVariant.SWORD_BEAM);
 
-  flog("Secret tear spawned", "SecretTearSpawner");
+  flog("Secret tear spawned ", "SecretTearSpawner");
+  logTearFlags(tear.TearFlags);
 }
