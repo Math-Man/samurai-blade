@@ -5,15 +5,7 @@ import { Tuneable } from "../../../data/Tuneable";
 import { CollectibleTypeCustom } from "../../../enums/CollectibleTypeCustom";
 import { SoundsCustom } from "../../../enums/SoundsCustom";
 import { Animations, isFinished, isPlaying, isPlayingOrFinishedIdle, isPlayingOrFinishedSwitchToChargedIdle, isPlayingOrFinishedSwitchToIdle } from "../../../helpers/AnimationHelpers";
-import {
-  canPlayerFireBlade,
-  getActualTimeToGoIdle,
-  getAndUpdatePlayerBladeFireTime,
-  getChargeTime,
-  getNextPlayerStateFromAnimation,
-  hasPlayerExitedAttackState,
-  isPlayerInAttackState,
-} from "../../../helpers/BladeHelpers";
+import { canPlayerFireBlade, getActualTimeToGoIdle, getAndUpdatePlayerBladeFireTime, getChargeTime, getNextPlayerStateFromAnimation, hasPlayerExitedAttackState, isPlayerInAttackState } from "../../../helpers/BladeHelpers";
 import { flog } from "../../../helpers/DebugHelper";
 import { isPlayerShooting, playerHasSamuraisBladeItem } from "../../../helpers/Helpers";
 import { clearDamageState } from "../onDealingDamage/DamageStateHandler";
@@ -31,8 +23,6 @@ export function updateBladeBehavior(): void {
     }
   }
 }
-
-let behaviorTickCounter = 0;
 
 function updatePlayerBladeBehavior(player: EntityPlayer) {
   disableShooting(player);
@@ -59,10 +49,7 @@ function updatePlayerBladeBehavior(player: EntityPlayer) {
       sfxManager.Play(SoundsCustom.SB_CHARGED_SLICE, 2, 0, false);
       sfxManager.Play(SoundEffect.EXPLOSION_WEAK, 0.8, 0, false);
       game.SpawnParticles(player.Position, EffectVariant.IMPACT, 25, 10);
-    } else if (
-      hitChainProgression === 2 &&
-      (isFinished(bladeSprite, Animations.FIRST_SWING) || isFinished(bladeSprite, Animations.CHARGED_SWING) || isPlayingOrFinishedSwitchToIdle(bladeSprite) || isPlayingOrFinishedIdle(bladeSprite))
-    ) {
+    } else if (hitChainProgression === 2 && (isFinished(bladeSprite, Animations.FIRST_SWING) || isFinished(bladeSprite, Animations.CHARGED_SWING) || isPlayingOrFinishedSwitchToIdle(bladeSprite) || isPlayingOrFinishedIdle(bladeSprite))) {
       bladeSprite.Play(Animations.SECOND_SWING, true);
       hitChainProgression = 3;
       sfxManager.Play(SoundsCustom.SB_SMALL_SLICE, 1, 0, false);
@@ -78,36 +65,17 @@ function updatePlayerBladeBehavior(player: EntityPlayer) {
 
     if (canDealDamage) {
       clearDamageState(player);
-      behaviorTickCounter = 0;
       const playerAimDir = player.GetAimDirection();
       getPlayerStateData(player).activeAimDirection = Vector(playerAimDir.X, playerAimDir.Y);
-      flog(
-        `I can attack: ${getPlayerStateData(player).lastFireTime} R:${game.GetFrameCount() - getPlayerStateData(player).lastFireTime} D:${Tuneable.FireDelayByProgressionStage.get(
-          getPlayerStateData(player).hitChainProgression,
-        )}`,
-        LOG_ID,
-      );
+      flog(`I can attack: ${getPlayerStateData(player).lastFireTime} R:${game.GetFrameCount() - getPlayerStateData(player).lastFireTime} D:${Tuneable.FireDelayByProgressionStage.get(getPlayerStateData(player).hitChainProgression)}`, LOG_ID);
     }
   } else {
     // Player is idling.
     const { lastFireTime } = getPlayerStateData(player);
 
     if (lastFireTime >= 0) {
-      if (
-        game.GetFrameCount() - lastFireTime > getActualTimeToGoIdle(player) &&
-        !(
-          isPlaying(bladeSprite, Animations.FIRST_SWING) ||
-          isPlaying(bladeSprite, Animations.SECOND_SWING) ||
-          isPlaying(bladeSprite, Animations.THIRD_SWING) ||
-          isPlaying(bladeSprite, Animations.CHARGED_SWING) ||
-          isPlaying(bladeSprite, Animations.IDLE) ||
-          isPlaying(bladeSprite, Animations.SWITCH_IDLE) ||
-          isPlaying(bladeSprite, Animations.CHARGED_IDLE) ||
-          isPlayingOrFinishedSwitchToChargedIdle(bladeSprite)
-        )
-      ) {
+      if (game.GetFrameCount() - lastFireTime > getActualTimeToGoIdle(player) && !(isPlaying(bladeSprite, Animations.FIRST_SWING) || isPlaying(bladeSprite, Animations.SECOND_SWING) || isPlaying(bladeSprite, Animations.THIRD_SWING) || isPlaying(bladeSprite, Animations.CHARGED_SWING) || isPlaying(bladeSprite, Animations.IDLE) || isPlaying(bladeSprite, Animations.SWITCH_IDLE) || isPlaying(bladeSprite, Animations.CHARGED_IDLE) || isPlayingOrFinishedSwitchToChargedIdle(bladeSprite))) {
         clearDamageState(player);
-        behaviorTickCounter = 0;
         getPlayerStateData(player).hitChainProgression = 1;
         if (!isPlaying(bladeSprite, Animations.SWITCH_IDLE)) {
           bladeSprite.Play(Animations.SWITCH_IDLE, false);
@@ -119,10 +87,7 @@ function updatePlayerBladeBehavior(player: EntityPlayer) {
       }
 
       const chargeTime = getChargeTime(player);
-      if (
-        game.GetFrameCount() - lastFireTime > chargeTime &&
-        ((!isPlaying(bladeSprite, Animations.CHARGED_IDLE) && !isPlaying(bladeSprite, Animations.SWITCH_CHARGED_IDLE)) || isFinished(bladeSprite, Animations.SWITCH_CHARGED_IDLE))
-      ) {
+      if (game.GetFrameCount() - lastFireTime > chargeTime && ((!isPlaying(bladeSprite, Animations.CHARGED_IDLE) && !isPlaying(bladeSprite, Animations.SWITCH_CHARGED_IDLE)) || isFinished(bladeSprite, Animations.SWITCH_CHARGED_IDLE))) {
         getPlayerStateData(player).charged = true;
         if (!isPlayingOrFinishedSwitchToChargedIdle(bladeSprite)) {
           bladeSprite.Play(Animations.SWITCH_CHARGED_IDLE, false);
