@@ -3,6 +3,7 @@ import { getPlayers } from "isaacscript-common";
 import { flushAllStateData, getPlayerStateData } from "../data/StateData";
 import { flog } from "../helpers/DebugHelper";
 import { playerHasSamuraisBladeItem } from "../helpers/Helpers";
+import { applyCoolCostume } from "./samuraiBlade/onCache/CostumeApplier";
 import { motivatePlayer } from "./samuraiBlade/onCache/Motivate";
 import { playerHitSound } from "./samuraiBlade/onDealingDamage/HitSound";
 import { spawnGore } from "./samuraiBlade/onDealingDamage/SpawnGore";
@@ -60,4 +61,9 @@ export function SamuraiBladePostTearUpdate(tear: EntityTear): void {
       setTearToBlade(tear);
     }
   }
+}
+
+export function SamuraiBladePostPickup(player: EntityPlayer): void {
+  flog("Item picked up!", LOG_ID);
+  applyCoolCostume(player);
 }
