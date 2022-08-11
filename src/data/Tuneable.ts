@@ -2,6 +2,7 @@ interface ITuneable {
   HitChainRanges: Map<unknown, number[]>;
   FireDelayByProgressionStage: Map<unknown, number>;
   Damage: Map<unknown, number>;
+  TearDamageMult: Map<unknown, number>;
   BaseRange: number;
   PushMultiplier: number;
   TimeToGoIdleFrames: number;
@@ -34,6 +35,11 @@ export const Tuneable: ITuneable = {
     [1, 0.8],
     [2, 0.5],
     [3, 1.0],
+  ]),
+  TearDamageMult: new Map<unknown, number>([
+    [1, 0.4],
+    [2, 0.25],
+    [3, 0.5],
   ]),
   BaseRange: 100,
   PushMultiplier: 3,
