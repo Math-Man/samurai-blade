@@ -1,8 +1,8 @@
 // Compiler messes up nil checks in reduce statements. This why we add this exclude.
 /* eslint-disable @typescript-eslint/no-unnecessary-condition */
 
-import { EntityType, LineCheckMode } from "isaac-typescript-definitions";
-import { clamp, game, getRandomInt } from "isaacscript-common";
+import { EntityType, LineCheckMode, TearFlag } from 'isaac-typescript-definitions';
+import { bitFlags, clamp, game, getRandomInt, hasFlag } from "isaacscript-common";
 import { getPlayerStateData } from "../../../data/StateData";
 import { Tuneable } from "../../../data/Tuneable";
 import { DamageFlagsCustom } from "../../../enums/DamageFlagsCustom";
@@ -81,6 +81,11 @@ export function doTileDamage(player: EntityPlayer): void {
 }
 
 export function LOSCheck(player: EntityPlayer, target: Entity): boolean {
+
+  if(shouldIgnoreLosChecks(player)) {
+    return true;
+  }
+
   if (IsLOSIgnoreType(target.Type)) {
     return true;
   }
@@ -97,4 +102,8 @@ export function IsLOSIgnoreType(type: EntityType): boolean {
     default:
       return false;
   }
+}
+
+export function shouldIgnoreLosChecks(player: EntityPlayer) : boolean {
+  return (hasFlag(player.TearFlags, TearFlag.SPECTRAL) || player.IsFlying())
 }
