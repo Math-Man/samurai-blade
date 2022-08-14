@@ -8,6 +8,7 @@ import { Animations, isFinished, isPlaying, isPlayingOrFinishedIdle, isPlayingOr
 import { canPlayerFireBlade, getActualTimeToGoIdle, getAndUpdatePlayerBladeFireTime, getChargeTime, getNextPlayerStateFromAnimation, hasPlayerExitedAttackState, isPlayerInAttackState } from "../../../helpers/BladeHelpers";
 import { flog } from "../../../helpers/DebugHelper";
 import { isPlayerShooting, playerHasSamuraisBladeItem } from "../../../helpers/Helpers";
+import { isHitCritical } from "../onDealingDamage/CriticalHitHandler";
 import { clearDamageState } from "../onDealingDamage/DamageStateHandler";
 import { dealSamuraiBladeDamage } from "./BladeDamage";
 
@@ -104,7 +105,7 @@ function updatePlayerBladeBehavior(player: EntityPlayer) {
   if (isPlayerInAttackState(bladeSprite)) {
     const canHitThisFrame = Tuneable.hitStateFrames.get(getPlayerStateData(player).hitChainProgression)?.includes(bladeSprite.GetFrame());
     if (canHitThisFrame ?? false) {
-      dealSamuraiBladeDamage(player);
+      dealSamuraiBladeDamage(player, isHitCritical(player));
     }
   }
 

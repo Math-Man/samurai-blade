@@ -1,8 +1,8 @@
 // Compiler messes up nil checks in reduce statements. This why we add this exclude.
 /* eslint-disable @typescript-eslint/no-unnecessary-condition */
 
-import { EntityType, LineCheckMode, TearFlag } from 'isaac-typescript-definitions';
-import { bitFlags, clamp, game, getRandomInt, hasFlag } from "isaacscript-common";
+import { EntityType, LineCheckMode, TearFlag } from "isaac-typescript-definitions";
+import { clamp, game, getRandomInt, hasFlag } from "isaacscript-common";
 import { getPlayerStateData } from "../../../data/StateData";
 import { Tuneable } from "../../../data/Tuneable";
 import { DamageFlagsCustom } from "../../../enums/DamageFlagsCustom";
@@ -15,7 +15,7 @@ import { handleTearCountSynergies, hasSpectral } from "../synergy/SynergyHandler
 
 const LOG_ID = "BladeDamage";
 
-export function dealSamuraiBladeDamage(player: EntityPlayer): void {
+export function dealSamuraiBladeDamage(player: EntityPlayer, isCritical: boolean): void {
   const targets = getHitTargetsInsideArea(player, player.Position, player.GetAimDirection(), getBladePhysicalRange(player));
   for (const target of targets) {
     if (target.IsVulnerableEnemy() || target.Type === EntityType.FIREPLACE || target.Type === EntityType.BOMB) {
@@ -23,14 +23,14 @@ export function dealSamuraiBladeDamage(player: EntityPlayer): void {
       flog(`hit count ${previousHitCountToSameEntity}, UNDEFINED: ${countOccurrencesOfState(player, target) === undefined}`, LOG_ID);
       if (LOSCheck(player, target) && (countOccurrencesOfState(player, target) === undefined || countOccurrencesOfState(player, target) <= Tuneable.maxNumberOfHitsInOneSwingToSameEntity - 1)) {
         // Do the damage related things once.
-        doEntityDamage(player, target, previousHitCountToSameEntity !== undefined ? previousHitCountToSameEntity : 0, 0, 1, 0);
+        doEntityDamage(player, target, previousHitCountToSameEntity !== undefined ? previousHitCountToSameEntity : 0, 0, 1, 0, isCritical);
         spawnSecretTear(player, target);
 
         // Handle tear count synergies.
         const tearCountSynergy = getRandomInt(0, handleTearCountSynergies(player));
         flog(`Extra hits count : ${tearCountSynergy}`, LOG_ID);
         for (let i = 0; i < tearCountSynergy; i++) {
-          doEntityDamage(player, target, previousHitCountToSameEntity !== undefined ? previousHitCountToSameEntity : 0, i + 1, clamp(1.2 / tearCountSynergy, 0, 1), 0.1);
+          doEntityDamage(player, target, previousHitCountToSameEntity !== undefined ? previousHitCountToSameEntity : 0, i + 1, clamp(1.2 / tearCountSynergy, 0, 1), 0.1, isCritical);
           spawnSecretTear(player, target);
         }
       }
@@ -45,13 +45,9 @@ export function dealSamuraiBladeDamage(player: EntityPlayer): void {
   doTileDamage(player);
 }
 
-export function doEntityDamage(player: EntityPlayer, entity: Entity, index: number, damageDelay: number, damageModifier: float, flatDamageIncrease: number): void {
-  entity.TakeDamage(
-    flatDamageIncrease + getBladeDamage(player) * damageModifier * Tuneable.DamageModifierForHittingSameEnemy ** index,
-    DamageFlagsCustom.SB_BLADE_DAMAGE,
-    EntityRef(player),
-    damageDelay,
-  );
+export function doEntityDamage(player: EntityPlayer, entity: Entity, index: number, damageDelay: number, damageModifier: float, flatDamageIncrease: number, isCritical: boolean): void {
+  const damageValue = (flatDamageIncrease + getBladeDamage(player) * damageModifier * Tuneable.DamageModifierForHittingSameEnemy ** index) * (isCritical ? Tuneable.baseCriticalDamageMultiplier : 1);
+  entity.TakeDamage(damageValue, DamageFlagsCustom.SB_BLADE_DAMAGE, EntityRef(player), damageDelay);
 }
 
 export function pushEntityAway(player: EntityPlayer, entity: Entity): void {
@@ -66,11 +62,7 @@ export function doTileDamage(player: EntityPlayer): void {
   const room = game.GetRoom();
   for (let i = 1; i < room.GetGridSize(); i++) {
     const gridEntity = room.GetGridEntity(i);
-    if (
-      gridEntity !== undefined &&
-      player.Position.Distance(gridEntity.Position) < getBladePhysicalRange(player) &&
-      isHitTargetInsideArea(player, player.Position, getPlayerStateData(player).activeAimDirection, gridEntity.Position)
-    ) {
+    if (gridEntity !== undefined && player.Position.Distance(gridEntity.Position) < getBladePhysicalRange(player) && isHitTargetInsideArea(player, player.Position, getPlayerStateData(player).activeAimDirection, gridEntity.Position)) {
       let gridDamage = 1;
       if (getPlayerStateData(player).charged) {
         gridDamage = 5;
@@ -81,8 +73,7 @@ export function doTileDamage(player: EntityPlayer): void {
 }
 
 export function LOSCheck(player: EntityPlayer, target: Entity): boolean {
-
-  if(shouldIgnoreLosChecks(player)) {
+  if (shouldIgnoreLosChecks(player)) {
     return true;
   }
 
@@ -104,6 +95,6 @@ export function IsLOSIgnoreType(type: EntityType): boolean {
   }
 }
 
-export function shouldIgnoreLosChecks(player: EntityPlayer) : boolean {
-  return (hasFlag(player.TearFlags, TearFlag.SPECTRAL) || player.IsFlying())
+export function shouldIgnoreLosChecks(player: EntityPlayer): boolean {
+  return hasFlag(player.TearFlags, TearFlag.SPECTRAL) || player.IsFlying();
 }

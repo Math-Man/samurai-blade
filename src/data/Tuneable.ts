@@ -16,6 +16,9 @@ interface ITuneable {
   IdleSize: Vector;
   hitStateFrames: Map<int, int[]>; // Hits all entities after given number of frames have passed since player started attacking in the int array, for all elements. Can't hit same entity twice.
   maxNumberOfHitsInOneSwingToSameEntity: number;
+  baseCriticalChance: float;
+  luckCriticalChanceEffect: float;
+  baseCriticalDamageMultiplier: float;
 }
 
 export const Tuneable: ITuneable = {
@@ -58,4 +61,7 @@ export const Tuneable: ITuneable = {
     [3, [2, 3, 4, 5, 6, 7, 8, 9]],
   ]),
   maxNumberOfHitsInOneSwingToSameEntity: 3,
+  baseCriticalChance: 5,
+  luckCriticalChanceEffect: 5,
+  baseCriticalDamageMultiplier: 1.5,
 } as const;
