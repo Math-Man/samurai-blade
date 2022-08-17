@@ -47,7 +47,7 @@ lol its a mess;
 BOI has a lot items and I mean A LOT OF ITEMS. Unfortunetly I don't have time or patience to implement synergy for all of these items at once. So, I've taken a shortcut.
 
 ##### Tearflag Synergies
-Every instance of damage done by the blade spawns a hidden tear with all tearflags of the player and with a base damage multiplier of zero. Although this is extremely hacky, pretty much all tear flags are succesfully handled by doing this.
+Every instance of damage done by the blade spawns a hidden tear with all tearflags of the player and with a reduced base damage multiplier, essentially unevenly splitting all damage dealt between the blade itself and tear and tearflag effects. Although this is extremely hacky, pretty much all tear flags are succesfully handled by doing this.
 
 The only problem remaining is the VFX and SFX of the tear. To handle this I've simply switched tear type to the tear that is spawned by the spirit sword which has very minimal amount of effects and doesn't look out of place when combined with items like ```Cricket's Body```.
 
