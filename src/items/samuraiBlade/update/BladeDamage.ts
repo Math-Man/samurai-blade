@@ -81,7 +81,7 @@ export function LOSCheck(player: EntityPlayer, target: Entity): boolean {
     return true;
   }
   flog(`hit count ${game.GetRoom().CheckLine(player.Position, target.Position, LineCheckMode.ECONOMIC)[0]}`, LOG_ID);
-  return hasSpectral(player) || game.GetRoom().CheckLine(player.Position, target.Position, LineCheckMode.ECONOMIC)[0];
+  return hasSpectral(player) || game.GetRoom().CheckLine(player.Position, target.Position, LineCheckMode.ECONOMIC, 0, true, false)[0];
 }
 
 export function IsLOSIgnoreType(type: EntityType): boolean {
