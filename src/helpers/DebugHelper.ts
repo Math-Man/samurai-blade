@@ -11,5 +11,5 @@ export function flog(text: string, source?: string): void {
 }
 
 export function isDebugMode(): boolean {
-  return true;
+  return false;
 }

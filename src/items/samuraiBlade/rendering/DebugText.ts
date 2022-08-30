@@ -1,9 +1,14 @@
 import { game } from "isaacscript-common";
 import { getPlayerStateData } from "../../../data/StateData";
 import { getActualTimeToGoIdle, getBladeDamage, getBladeFireDelay, getChargeTime } from "../../../helpers/BladeHelpers";
+import { isDebugMode } from "../../../helpers/DebugHelper";
 import { getPlayerById, playerHasSamuraisBladeItem } from "../../../helpers/Helpers";
 
 export function printDebugText(): void {
+  if (!isDebugMode()) {
+    return;
+  }
+
   const player = getPlayerById(0);
 
   Isaac.RenderText(`Player: ${player.Index}`, 68, 30, 0, 255, 255, 255);

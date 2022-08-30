@@ -46,7 +46,7 @@ export function dealSamuraiBladeDamage(player: EntityPlayer, isCritical: boolean
 }
 
 export function doEntityDamage(player: EntityPlayer, entity: Entity, index: number, damageDelay: number, damageModifier: float, flatDamageIncrease: number, isCritical: boolean): void {
-  const damageValue = (flatDamageIncrease + getBladeDamage(player) * damageModifier * Tuneable.DamageModifierForHittingSameEnemy ** index) * (isCritical ? Tuneable.baseCriticalDamageMultiplier : 1);
+  const damageValue = (flatDamageIncrease + getBladeDamage(player) * damageModifier * Tuneable.DamageModifierForHittingSameEnemy ** index) * (isCritical ? Tuneable.baseCriticalDamageMultiplier : 1) + (entity.IsBoss() ? 3 : 0);
   entity.TakeDamage(damageValue, DamageFlagsCustom.SB_BLADE_DAMAGE, EntityRef(player), damageDelay);
 }
 
