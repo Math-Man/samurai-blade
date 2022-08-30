@@ -67,4 +67,4 @@ To handle complex synergies, the behavior needs to be injected into the flow of 
 
 - Base sound effects are from [Ultimate Sound FX Bundle](https://assetstore.unity.com/packages/audio/sound-fx/ultimate-sound-fx-bundle-151756).
 - Art by [Von Duckling](https://steamcommunity.com/profiles/76561197999025384/).
-- Metal Gear Revengence owned by Konami Holdings Corporation
+- Metal Gear series and Metal Gear Rising owned by Konami Holdings Corporation
