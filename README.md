@@ -14,6 +14,8 @@ This mod only adds a single item called `Samurai's Blade` which can be found as 
 
 Although `Samurai's Blade` has stats of its own, all of its stats are modified by player's own stats.
 
+<img src="media/p2.gif" width=100%>
+
 <details>
   <summary>
     Player stats and what they effect (Spoilers?)

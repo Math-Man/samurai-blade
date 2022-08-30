@@ -7,7 +7,7 @@ import { flog } from "./DebugHelper";
 const LOG_ID = "BladeHelpers";
 
 const RANGE_CONVERSION_FACTOR = 40;
-const CHARGE_VALUE_MODIFIER_FACTOR = 0.5;
+const CHARGE_VALUE_MODIFIER_FACTOR = 0.25;
 
 export function getBladeSpriteScaleFromStats(player: EntityPlayer): Vector {
   const { charged } = getPlayerStateData(player);
@@ -36,7 +36,7 @@ export function getBladeDamage(player: EntityPlayer): float {
   if (damage === undefined) {
     error("Invalid hit chain progression value");
   }
-  let damageVal = damage + player.Damage * 0.8;
+  let damageVal = damage + player.Damage * 0.6;
   if (charged) {
     damageVal *= 1 + CHARGE_VALUE_MODIFIER_FACTOR;
   }
