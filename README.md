@@ -61,7 +61,7 @@ The only problem remaining is the VFX and SFX of the tear. To handle this I've s
 
 ##### Complex Synergies
 
-To handle complex synergies, the behavior needs to be injected into the flow of the code. Most special synergies are handled under \_\_\_\_. One such complex synergy is with the items that increase the number of shots isaac shoots every attack. There is no 'right' way of handling this synergy so I've simply increased the number of hits the blade attack can do to an enemy for every hit, this doesn't just effect the damage but the things such as knockback as well. I think this simulates the mechanical multiplier of these items almost perfectly.
+To handle complex synergies, the behavior needs to be injected into the flow of the game without breaking the unique behavior of the item. One such complex synergy is with the items that increase the number of shots isaac shoots every attack. There is no 'right' way of handling this synergy so I've simply increased the number of hits the blade attack can do to an enemy for every hit, this doesn't just effect the damage but the things such as knockback as well. I think this simulates the mechanical multiplier of these items almost perfectly.
 
 #### Credits
 
