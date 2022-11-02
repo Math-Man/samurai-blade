@@ -9,7 +9,7 @@ function getPlayerCollectibleMap(player: EntityPlayer): Map<CollectibleType, int
   const collectibleMap = new Map<CollectibleType, int>();
   for (const collectibleType of collectibleArray) {
     // We specify "true" as the second argument to filter out things like Lilith's Incubus.
-    const numCollectibles = player.GetCollectibleNum(collectibleType.SubType, false);
+    const numCollectibles = player.GetCollectibleNum(collectibleType.SubType, true);
     if (numCollectibles > 0) {
       collectibleMap.set(collectibleType.SubType, numCollectibles);
     }
