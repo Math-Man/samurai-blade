@@ -1,22 +1,7 @@
 import { CollectibleType } from "isaac-typescript-definitions";
-import { getCollectibles, getPlayers } from "isaacscript-common";
+import { getPlayerCollectibleMap, getPlayers } from "isaacscript-common";
 
 let synergyCache = new Map<number, Map<CollectibleType, number>>(); // player, <collectible, count of colectible>
-
-function getPlayerCollectibleMap(player: EntityPlayer): Map<CollectibleType, int> {
-  const collectibleArray = getCollectibles();
-
-  const collectibleMap = new Map<CollectibleType, int>();
-  for (const collectibleType of collectibleArray) {
-    // We specify "true" as the second argument to filter out things like Lilith's Incubus.
-    const numCollectibles = player.GetCollectibleNum(collectibleType.SubType, true);
-    if (numCollectibles > 0) {
-      collectibleMap.set(collectibleType.SubType, numCollectibles);
-    }
-  }
-
-  return collectibleMap;
-}
 
 export function incrementCacheSynergyItem(playerIndex: number, collectible: CollectibleType): void {
   const existingCacheValue = getPlayerCache(playerIndex).get(collectible);
